@@ -2,9 +2,7 @@
   <div>
     <l-map :zoom="zoom" :center="center">
       <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-      <l-marker v-for="cord in sensors" :key="cord.id_sensors" :lat-lng="genCord(cord)" :icon="icon" v-on:click="clicked(cord)">
-        <l-popup :content="cord.lot.id_lot + '-' + cord.lot.id_malette"></l-popup>
-      </l-marker>
+      <l-marker v-for="cord in sensors" :key="cord.id_sensors" :lat-lng="genCord(cord)" :icon="icon" v-on:click="clicked(cord)"></l-marker>
     </l-map>
   </div>
 </template>
@@ -16,7 +14,7 @@ import L from 'leaflet'
 
 export default {
   name: 'MapCampaign',
-  props: ['campaign', 'sensors'],
+  props: ['campaign', 'sensors', 'lots'],
   components: {
     LMap,
     LTileLayer,
@@ -37,7 +35,7 @@ export default {
       return cord
     },
     clicked (elmt) {
-      console.log(elmt)
+      this.$parent.$refs.lotInfo.setLot(this.lots[elmt.lot.id_lot])
     }
   },
   computed: {
