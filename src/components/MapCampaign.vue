@@ -2,7 +2,7 @@
   <div>
     <l-map :zoom="zoom" :center="center">
       <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-      <l-marker v-for="cord in sensors" :key="cord.id_sensors" :lat-lng="genCord(cord)" :icon="icon">
+      <l-marker v-for="cord in sensors" :key="cord.id_sensors" :lat-lng="genCord(cord)" :icon="icon" v-on:click="clicked(cord)">
         <l-popup :content="cord.lot.id_lot + '-' + cord.lot.id_malette"></l-popup>
       </l-marker>
     </l-map>
@@ -35,6 +35,9 @@ export default {
     genCord (elmt) {
       var cord = L.latLng(elmt.gps_pos.coordinates[0], elmt.gps_pos.coordinates[1])
       return cord
+    },
+    clicked (elmt) {
+      console.log(elmt)
     }
   },
   computed: {
