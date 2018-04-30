@@ -4,7 +4,7 @@
      <div class="column">
        <LotList style="width: 10%" v-bind:lots="lots"></LotList>
        <div class="row" style="width: 100%">
-         <MapCampaign style="width: 100%; height: 700px;" v-on:test="test" v-bind:campaign="campaign" v-bind:sensors="sensors" v-bind:lots="lots_json"></MapCampaign>
+         <MapCampaign style="width: 100%; height: 500px;" v-bind:campaign="campaign" v-bind:sensors="sensors" v-bind:lots="lots_json"></MapCampaign>
          <LotInfo ref="lotInfo"></LotInfo>
        </div>
      </div>
@@ -59,11 +59,6 @@ export default {
             }
           })
       })
-  },
-  methods: {
-    test: function () {
-      console.log('tested !')
-    }
   }
 }
 </script>
@@ -77,6 +72,6 @@ export default {
 .row{
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 </style>

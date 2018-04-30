@@ -5,7 +5,7 @@
 
 <script>
 import '../../node_modules/pannellum/build/pannellum.css'
-import pannellum from '../../node_modules/pannellum/build/pannellum.js'
+import {} from '../../node_modules/pannellum/build/pannellum.js'
 
 export default {
   name: 'PanoViewer',
