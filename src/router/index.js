@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import CampaignList from '@/components/CampaignList'
 import Campaign from '@/components/Campaign'
 import PanoViewer from '@/components/PanoViewer'
+import ImportCampaign from '@/components/ImportCampaign'
 
 Vue.use(Router)
 
@@ -24,6 +25,12 @@ export default new Router({
       props: true,
       name: 'Viewer',
       component: PanoViewer
+    },
+    {
+      path: '/import/',
+      props: false,
+      name: 'ImportCampaign',
+      component: ImportCampaign
     }
   ]
 })
