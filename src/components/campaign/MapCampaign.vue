@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import '../../node_modules/leaflet/dist/leaflet.css'
+import '@/../node_modules/leaflet/dist/leaflet.css'
 import { LMap, LTileLayer, LMarker, LPopup } from 'vue2-leaflet'
 import L from 'leaflet'
 
@@ -38,9 +38,9 @@ export default {
       this.$parent.$refs.lotInfo.setLot(elmt)
     },
     icon (elmt) {
-      var icon = L.icon({iconUrl: require('../assets/marker_not_assembled.png'), iconSize: [40, 40], iconAnchor: [20, 20]})
+      var icon = L.icon({iconUrl: require('@/assets/marker_not_assembled.png'), iconSize: [40, 40], iconAnchor: [20, 20]})
       if (elmt.tile.id_tile !== null) {
-        icon.options.iconUrl = require('../assets/marker_assembled.png')
+        icon.options.iconUrl = require('@/assets/marker_assembled.png')
       }
       return icon
     }

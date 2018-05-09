@@ -12,10 +12,10 @@
 </template>
 
 <script>
-import CampaignInfo from '@/components/CampaignInfo'
-import LotList from '@/components/LotList'
-import MapCampaign from '@/components/MapCampaign'
-import LotInfo from '@/components/LotInfo'
+import CampaignInfo from '@/components/campaign/CampaignInfo'
+import LotList from '@/components/campaign/LotList'
+import MapCampaign from '@/components/campaign/MapCampaign'
+import LotInfo from '@/components/campaign/LotInfo'
 
 export default {
   name: 'Campaign',

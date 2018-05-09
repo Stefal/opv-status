@@ -1,9 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import CampaignList from '@/components/CampaignList'
-import Campaign from '@/components/Campaign'
+import Campaign from '@/components/campaign/Campaign'
 import PanoViewer from '@/components/PanoViewer'
 import ImportCampaign from '@/components/ImportCampaign'
+import Spark from '@/components/Spark'
 
 Vue.use(Router)
 
@@ -31,6 +32,12 @@ export default new Router({
       props: false,
       name: 'ImportCampaign',
       component: ImportCampaign
+    },
+    {
+      path: '/spark/',
+      props: false,
+      name: 'Spark',
+      component: Spark
     }
   ]
 })
