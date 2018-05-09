@@ -2,7 +2,7 @@
    <div class='column'>
      <div style='width: 50%'>
        <h1>Spark</h1>
-       Campaign dir <input ref='campaignName'><input type='button' value='Launch spark' v-on:click='launchSpark()'><br>
+       Campaign name <input ref='campaignName'><input type='button' value='Launch spark' v-on:click='launchSpark()'><br>
        Custom launch script <input ref='customLaunchScript'><br>
        <input type='button' value='Start scan spark' v-on:click='startScan()'> <input type='button' value='Stop scan spark' v-on:click='stopScan()'>
      </div>

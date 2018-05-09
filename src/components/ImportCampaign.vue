@@ -2,7 +2,12 @@
   <div class='column'>
     <div style='width: 50%'>
       <h1>Import data</h1>
-      Campaign dir : <input ref="campaignDir">
+      Campaign dir : <input ref="campaignDir"><br>
+      Campaign name : <input ref="campaignName"><br>
+      Id malette : <input ref="idMalette" value="1"><br>
+      Id rederbro : <input ref="idRederbro" value="1"><br>
+      Camera number : <input ref="cameraNB" value="6"><br>
+      Description : <input ref="description" value="An amazing campaign"><br>
       <input type='button' value='Launch import' v-on:click='launch()'><br>
       Log file : <input ref="logFile">
       <input type='button' value='Show log' v-on:click='showLog()'><br>
@@ -54,9 +59,20 @@ export default {
         })
     },
     launch () {
-      var args = JSON.stringify({'campaignDir': this.$refs.campaignDir.value})
+      var args = JSON.stringify({
+        'path': this.$refs.campaignDir.value,
+        'id_malette': this.$refs.idMalette.value,
+        'id_rederbro': this.$refs.idRederbro.value,
+        'camera_number': this.$refs.cameraNB.value,
+        'description': this.$refs.description.value,
+        'campaign_name': this.$refs.campaignName.value
+      })
 
       axios.post('http://opv_master:5001/import/launch', args)
+        .catch(error => {
+          console.log(error)
+          this.error = error.response.data
+        })
     },
     scan () {
       const that = this
