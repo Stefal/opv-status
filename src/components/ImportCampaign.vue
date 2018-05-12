@@ -2,14 +2,14 @@
   <div class='column'>
     <div style='width: 50%'>
       <h1>Import data</h1>
-      Campaign dir : <input ref="campaignDir"><br>
-      Campaign name : <input ref="campaignName"><br>
-      Id malette : <input ref="idMalette" value="1"><br>
-      Id rederbro : <input ref="idRederbro" value="1"><br>
-      Camera number : <input ref="cameraNB" value="6"><br>
-      Description : <input ref="description" value="An amazing campaign"><br>
+      Campaign dir : <input ref='campaignDir'><br>
+      Campaign name : <input ref='campaignName'><br>
+      Id malette : <input ref='idMalette' value='1'><br>
+      Id rederbro : <input ref='idRederbro' value='1'><br>
+      Camera number : <input ref='cameraNB' value='6'><br>
+      Description : <input ref='description' value='An amazing campaign'><br>
       <input type='button' value='Launch import' v-on:click='launch()'><br>
-      Log file : <input ref="logFile">
+      Log file : <input ref='logFile'>
       <input type='button' value='Show log' v-on:click='showLog()'><br>
       <input type='button' value='Scan for end' v-on:click='scan()'><br>
       Your campaign dir must have a tree like that : <br>
@@ -77,6 +77,7 @@ export default {
     scan () {
       const that = this
       this.doScan = setInterval(function () {
+        that.status = 'up'
         fetch('http://opv_master:5001/import/status')
           .then(answer => answer.json())
           .then(json => {
