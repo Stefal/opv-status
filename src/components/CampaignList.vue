@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import ApiManager from '@/apiManager'
+
 export default {
   name: 'CampaignList',
   data () {
@@ -25,11 +27,9 @@ export default {
     }
   },
   created () {
-    fetch('http://opv_master:5000/campaign/')
-      .then(answer => answer.json())
-      .then(json => {
-        this.campaigns = json.objects
-      })
+    ApiManager.getCampaignList().then(answer => {
+      this.campaigns = answer.data.objects
+    })
   }
 }
 </script>

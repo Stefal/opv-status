@@ -6,6 +6,7 @@
 <script>
 import '../../node_modules/pannellum/build/pannellum.css'
 import {} from '../../node_modules/pannellum/build/pannellum.js'
+import ApiManager from '@/apiManager'
 
 export default {
   name: 'PanoViewer',
@@ -21,35 +22,33 @@ export default {
   },
 
   created () {
-    fetch('http://opv_master:5000/tile/' + this.id_tile + '/' + this.id_malette)
-      .then(answer => answer.json())
-      .then(json => {
-        this.tile = json
+    ApiManager.getTile(this.id_tile, this.id_malette).then(answer => {
+      this.tile = answer.data
 
-        this.config = {
+      this.config = {
+        default: {
+          author: 'Open Path View CC-BY-SA',
+          title: 'Rederbro',
+          autoLoad: true,
+          firstScene: 'default'
+        },
+        scenes: {
           default: {
-            author: 'Open Path View CC-BY-SA',
-            title: 'Rederbro',
-            autoLoad: true,
-            firstScene: 'default'
-          },
-          scenes: {
-            default: {
-              type: 'multires',
-              title: 'default',
-              multiRes: {
-                extension: json.extension,
-                tileResolution: json.resolution,
-                basePath: 'http://opv_master:5050/v1/files/' + json.param_location,
-                cubeResolution: json.cube_resolution,
-                path: '/%l/%s%y_%x',
-                maxLevel: json.max_level
-              }
+            type: 'multires',
+            title: 'default',
+            multiRes: {
+              extension: answer.data.extension,
+              tileResolution: answer.data.resolution,
+              basePath: 'http://opv_master:5050/v1/files/' + answer.data.param_location,
+              cubeResolution: answer.data.cube_resolution,
+              path: '/%l/%s%y_%x',
+              maxLevel: answer.data.max_level
             }
           }
         }
-        this.viewer = this.pannellum.viewer('pano', this.config)
-      })
+      }
+      this.viewer = this.pannellum.viewer('pano', this.config)
+    })
   }
 }
 </script>

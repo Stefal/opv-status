@@ -2,7 +2,8 @@
    <div class='column'>
      <div style='width: 50%'>
        <h1>Spark</h1>
-       Campaign name <input ref='campaignName'><input type='button' value='Launch spark' v-on:click='launchSpark()'><br>
+       Campaign id <input ref='campaignId'><br>
+       Malette id <input ref='maletteId'><input type='button' value='Launch spark' v-on:click='launchSpark()'><br>
        Custom launch script <input ref='customLaunchScript'><br>
        <input type='button' value='Start scan spark' v-on:click='startScan()'> <input type='button' value='Stop scan spark' v-on:click='stopScan()'>
      </div>
@@ -25,7 +26,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import ApiManager from '@/apiManager'
 
 export default {
   name: 'Spark',
@@ -41,19 +42,17 @@ export default {
   methods: {
     launchSpark () {
       var args = {
-        'campaignName': this.$refs.campaignName.value
+        'campaign_id': this.$refs.campaignId.value,
+        'malette_id': this.$refs.maletteId.value
       }
       if (this.$refs.customLaunchScript.value !== '') {
         args.customLaunchScript = this.$refs.customLaunchScript.value
       }
       args = JSON.stringify(args)
-      axios.post('http://opv_master:5001/spark/launch', args)
-        .then(answer => {
-          this.answer = answer.data.answer
-        })
-        .catch(error => {
-          this.answer = error.response.data.error
-        })
+      ApiManager.postSparkLaunch(args).then(answer => {
+        this.answer = answer.data.answer
+        this.startScan()
+      })
     },
     stopScan () {
       if (this.scanTimeout != null) {
@@ -61,33 +60,32 @@ export default {
       }
     },
     startScan () {
+      this.stopScan()
+
       const that = this
       this.scanTimeout = setInterval(function () {
-        axios.get('http://opv_master:5001/spark/port')
-          .then(answer => {
-            that.sparkApiPort = answer.data.answer
-            that.sparkApp = []
-            for (var port in answer.data.answer) {
-              port = answer.data.answer[port]
-              that.scanPort(port)
-            }
-          })
-          .catch(error => {
-            that.sparkApiPort = error.response.data.error
-          })
+        ApiManager.getSparkPort().then(answer => {
+          that.sparkApiPort = answer.data.answer
+          that.sparkApp = []
+          if (answer.data.answer.length === 0) {
+            that.stopScan()
+          }
+          for (var port in answer.data.answer) {
+            port = answer.data.answer[port]
+            that.scanPort(port)
+          }
+        })
         that.number++
       }, 5000)
     },
     scanPort (port) {
-      axios.get('http://opv_master:' + port + '/api/v1/applications')
-        .then(applications => {
-          axios.get('http://opv_master:' + port + '/api/v1/applications/' + applications.data[0].id + '/jobs')
-            .then(jobs => {
-              var app = applications.data[0]
-              app.jobs = jobs.data[0]
-              this.sparkApp.push(app)
-            })
+      ApiManager.getSparkApp(port).then(applications => {
+        ApiManager.getSparkJob(port, applications.data[0].id).then(jobs => {
+          var app = applications.data[0]
+          app.jobs = jobs.data[0]
+          this.sparkApp.push(app)
         })
+      })
     }
   },
   watch: {
