@@ -12,6 +12,7 @@
       <td>{{ campaign.id_campaign }}</td>
       <td>{{ campaign.id_malette }}</td>
       <td><router-link :to="'/campaign/' + campaign.id_campaign + '/' + campaign.id_malette">More</router-link></td>
+      <td><router-link :to="'/spark/' + campaign.id_campaign + '/' + campaign.id_malette">Make</router-link></td>
     </tr>
   </table>
 </template>

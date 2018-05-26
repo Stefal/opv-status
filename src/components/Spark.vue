@@ -30,6 +30,8 @@ import ApiManager from '@/apiManager'
 
 export default {
   name: 'Spark',
+  props: ['id_campaign', 'id_malette'],
+
   data () {
     return {
       answer: '',
@@ -37,6 +39,12 @@ export default {
       scanTimeout: null,
       sparkApiPort: [],
       number: 0
+    }
+  },
+  mounted () {
+    if (this.id_campaign != null && this.id_malette != null) {
+      this.$refs.campaignId.value = this.id_campaign
+      this.$refs.maletteId.value = this.id_malette
     }
   },
   methods: {
