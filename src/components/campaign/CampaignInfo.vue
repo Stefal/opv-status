@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import ApiManager from '@/apiManager'
 
 export default {
   name: 'CampaignInfo',
@@ -69,11 +70,9 @@ export default {
       this.lotPicture = []
       for (var i in this.lots) {
         i = this.lots[i]
-        fetch('http://opv_master:5050/v1/files/' + i.pictures_path)
-          .then(answer => answer.json())
-          .then(json => {
-            this.lotPicture.push(json.length)
-          })
+        ApiManager.getLotPicturesPath(i.pictures_path).then(answer => {
+          this.lotPicture.push(answer.data.length)
+        })
       }
     }
   }

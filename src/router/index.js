@@ -34,6 +34,12 @@ export default new Router({
       component: ImportCampaign
     },
     {
+      path: '/spark/:id_campaign/:id_malette',
+      props: true,
+      name: 'SparkValue',
+      component: Spark
+    },
+    {
       path: '/spark/',
       props: false,
       name: 'Spark',

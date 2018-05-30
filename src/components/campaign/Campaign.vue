@@ -16,6 +16,7 @@ import CampaignInfo from '@/components/campaign/CampaignInfo'
 import LotList from '@/components/campaign/LotList'
 import MapCampaign from '@/components/campaign/MapCampaign'
 import LotInfo from '@/components/campaign/LotInfo'
+import ApiManager from '@/apiManager'
 
 export default {
   name: 'Campaign',
@@ -36,16 +37,15 @@ export default {
   },
 
   created () {
-    fetch('http://opv_master:5000/campaign/' + this.id_campaign + '/' + this.id_malette)
-      .then(answer => answer.json())
-      .then(json => {
-        this.campaign = json
-        fetch('http://opv_master:5000/lot/with_sensors?id_campaign=' + json.id_campaign)
-          .then(answer => answer.json())
-          .then(json => {
-            this.lots = json.objects
-          })
-      })
+    ApiManager.getCampaign(this.id_campaign, this.id_malette).then(answer => {
+      this.campaign = answer.data
+      for (var lot in answer.data.lots) {
+        lot = answer.data.lots[lot]
+        ApiManager.getLotWithSensors(lot.id_lot, lot.id_malette).then(lot => {
+          this.lots.push(lot.data)
+        })
+      }
+    })
   }
 }
 </script>

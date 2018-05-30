@@ -12,6 +12,7 @@
       Log file : <input ref='logFile'>
       <input type='button' value='Show log' v-on:click='showLog()'><br>
       <input type='button' value='Scan for end' v-on:click='scan()'><br>
+      <input type='button' value='Stop scan' v-on:click='stopScan()'><br>
       Your campaign dir must have a tree like that : <br>
       campaign<br>
         ├── picturesInfo.csv<br>
@@ -22,14 +23,14 @@
       Status : {{ status }}<br>
       Doing : {{ doing }}<br>
       Pourcent : {{ pourcent }}<br>
-      Error : {{ error }}<br>
+      Time : {{ time }}<br>
       Log : {{ log }}<br>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
+import ApiManager from '@/apiManager'
 
 export default {
   name: 'ImportCampaign',
@@ -39,9 +40,9 @@ export default {
       status: 'down',
       doing: 'nothing',
       pourcent: 0,
-      error: 0,
       log: '',
-      doScan: null
+      doScan: null,
+      time: 0
     }
   },
   methods: {
@@ -50,13 +51,9 @@ export default {
       if (this.$refs.logFile.value !== '') {
         args = JSON.stringify({'logFile': this.$refs.logFile.value})
       }
-      axios.post('http://opv_master:5001/import/log', args)
-        .then(answer => {
-          this.log = answer.data.answer
-        })
-        .catch(error => {
-          this.log = error.response.data.error
-        })
+      ApiManager.postImportLog(args).then(answer => {
+        this.log = answer.data.answer
+      })
     },
     launch () {
       var args = JSON.stringify({
@@ -68,32 +65,34 @@ export default {
         'campaign_name': this.$refs.campaignName.value
       })
 
-      axios.post('http://opv_master:5001/import/launch', args)
-        .catch(error => {
-          console.log(error)
-          this.error = error.response.data
-        })
+      ApiManager.postImportLaunch(args).then(answer => {
+        this.scan()
+      })
     },
     scan () {
+      this.stopScan()
       const that = this
       this.doScan = setInterval(function () {
         that.status = 'up'
-        fetch('http://opv_master:5001/import/status')
-          .then(answer => answer.json())
-          .then(json => {
-            json = json.answer
-            that.number++
-            that.doing = json.doing
-            that.pourcent = json.pourcent
-            that.status = json.status
-          })
+        ApiManager.getImportStatus().then(answer => {
+          that.number++
+          that.doing = answer.data.answer.doing
+          that.pourcent = answer.data.answer.pourcent
+          that.status = answer.data.answer.status
+          that.time = answer.data.answer.time
+        })
       }, 1000)
+    },
+    stopScan () {
+      if (this.doScan != null) {
+        clearInterval(this.doScan)
+      }
     }
   },
   watch: {
     status: function () {
-      if (this.doScan != null && this.status === 'down') {
-        clearInterval(this.doScan)
+      if (this.status === 'down') {
+        this.stopScan()
       }
     }
   }
