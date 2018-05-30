@@ -1,9 +1,9 @@
 import axios from 'axios'
 
-var opv = 'http://opv_master'
-var opvApi = opv + ':5000/'
-var opvDb = opv + ':5050/v1/files/'
-var opvSt = opv + ':5001/'
+const opv = 'http://opv_master'
+const opvApi = opv + ':5000/'
+const opvDb = opv + ':5050/v1/files/'
+const opvSt = opv + ':5001/'
 
 export default class ApiManager {
   static getCampaignList () {
