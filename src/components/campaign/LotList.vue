@@ -2,8 +2,10 @@
    <div>
      <h2>Lot list :</h2>
      <ul>
-       <li v-for="lot in lots" v-bind:class="classToUse(lot)" v-bind:key="lot.id_lot">{{lot.id_lot}}
-         <router-link v-if="lot.tile.id_tile !== null" :to="'/viewer/' + lot.tile.id_tile + '/' + lot.id_malette">See</router-link></li>
+       <li v-for="lot in lots" v-bind:class="classToUse(lot)" v-bind:ref="lot.id_lot" v-bind:key="lot.id_lot">{{lot.id_lot}}
+         <router-link v-if="lot.tile.id_tile !== null" :to="'/viewer/' + lot.tile.id_tile + '/' + lot.id_malette">See pano</router-link>
+         <span v-on:click="clicked(lot)">See</span>
+       </li>
      </ul>
    </div>
 </template>
@@ -21,6 +23,12 @@ export default {
         return 'bad'
       }
       return 'good'
+    },
+    setIncomplet: function (id) {
+      this.$refs[id][0].className = 'uncomplet'
+    },
+    clicked: function (lot) {
+      this.$parent.$refs.lotInfo.setLot(lot)
     }
   }
 }
@@ -28,9 +36,12 @@ export default {
 
 <style>
 .bad{
-  background-color: red;
+  background-color: orange;
 }
 .good{
   background-color: green;
+}
+.uncomplet{
+  background-color: red;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
    <div>
      <h1>Campaign : {{ campaign.id_campaign }}-{{ campaign.id_malette }} -->  {{ campaign.name }}</h1>
-     <p>Assembled : {{ assemledPourcent }}% Geoloc : {{ geolocPourcent }}% <span v-on:click='calculateCompletPourcent()'>Complet : {{ completPourcent }}%</span></p>
+     <p>Assembled : {{ assemledPourcent }}% Geoloc : {{ geolocPourcent }}% <span v-on:click='calculateCompletPourcent()'>Complet : {{ completPourcent }}</span></p>
    </div>
 </template>
 
@@ -16,7 +16,8 @@ export default {
     return {
       pictureNumber: [],
       canUse: false,
-      lotPicture: []
+      completLot: null,
+      minPic: 6
     }
   },
 
@@ -51,29 +52,29 @@ export default {
       return value
     },
     completPourcent: function () {
-      if (this.lotPicture.length >= this.lots.length) {
-        var completLot = 0
-        for (var i in this.lotPicture) {
-          i = this.lotPicture[i]
-          if (i >= 6) {
-            completLot++
-          }
-        }
-        return Math.round(completLot / this.lots.length * 100)
+      if (this.completLot == null) {
+        return 'Click to compute'
       } else {
-        return 'Click to calculate'
+        return Math.round(this.completLot / this.lots.length * 100) + '%'
       }
     }
   },
   methods: {
     calculateCompletPourcent: function () {
-      this.lotPicture = []
+      this.completLot = 0
       for (var i in this.lots) {
-        i = this.lots[i]
-        ApiManager.getLotPicturesPath(i.pictures_path).then(answer => {
-          this.lotPicture.push(answer.data.length)
-        })
+        this.isComplet(this.lots[i])
       }
+    },
+    isComplet: function (lot) {
+      ApiManager.getLotPicturesPath(lot.pictures_path).then(answer => {
+        if (answer.data.length >= this.minPic) {
+          this.completLot++
+        } else {
+          this.$parent.$refs.map.setIncomplet(lot.id_lot)
+          this.$parent.$refs.lotList.setIncomplet(lot.id_lot)
+        }
+      })
     }
   }
 }

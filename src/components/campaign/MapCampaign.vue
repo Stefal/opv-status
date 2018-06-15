@@ -2,7 +2,7 @@
   <div>
     <l-map ref='map' :zoom='zoom' :center='center'>
       <l-tile-layer :url='url' :attribution='attribution'></l-tile-layer>
-      <l-marker v-for='lot in lots' :key='lot.id_lot' :lat-lng='genCord(lot.sensors)' :icon='icon(lot)' v-on:click='clicked(lot)'></l-marker>
+      <l-marker v-for='lot in lots' :ref="lot.id_lot" :key='lot.id_lot' :lat-lng='genCord(lot.sensors)' :icon='icon(lot)' v-on:click='clicked(lot)'></l-marker>
     </l-map>
   </div>
 </template>
@@ -23,7 +23,7 @@ export default {
   },
   data () {
     return {
-      zoom: 13,
+      zoom: 19,
       url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }
@@ -43,6 +43,9 @@ export default {
         icon.options.iconUrl = require('@/assets/marker_assembled.png')
       }
       return icon
+    },
+    setIncomplet (id) {
+      this.$refs[id][0].icon = L.icon({iconUrl: require('@/assets/marker_not_full.png'), iconSize: [40, 40], iconAnchor: [20, 20]})
     }
   },
   computed: {

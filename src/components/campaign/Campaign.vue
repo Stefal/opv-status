@@ -2,9 +2,9 @@
    <div>
      <CampaignInfo v-bind:lots="lots" v-bind:campaign="campaign"></CampaignInfo>
      <div class="column">
-       <LotList style="width: 10%" v-bind:lots="lots"></LotList>
+       <LotList ref="lotList" style="width: 10%" v-bind:lots="lots"></LotList>
        <div class="row" style="width: 100%">
-         <MapCampaign style="width: 100%; height: 500px;" v-bind:lots="lots"></MapCampaign>
+         <MapCampaign ref="map" style="width: 100%; height: 500px;" v-bind:lots="lots"></MapCampaign>
          <LotInfo ref="lotInfo"></LotInfo>
        </div>
      </div>
