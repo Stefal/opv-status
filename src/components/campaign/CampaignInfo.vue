@@ -7,6 +7,7 @@
 
 <script>
 import ApiManager from '@/apiManager'
+import Config from '@/config.json'
 
 export default {
   name: 'CampaignInfo',
@@ -17,7 +18,7 @@ export default {
       pictureNumber: [],
       canUse: false,
       completLot: null,
-      minPic: 6
+      minPic: Config.picture
     }
   },
 

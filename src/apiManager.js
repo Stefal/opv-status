@@ -1,9 +1,10 @@
 import axios from 'axios'
+import Config from '@/config.json'
 
-const opv = 'http://opv_master'
-const opvApi = opv + ':5000/'
-const opvDb = opv + ':5050/v1/files/'
-const opvSt = opv + ':5001/'
+const opv = Config.server.host
+const opvApi = opv + ':' + Config.server.api_port + '/'
+const opvDb = opv + ':' + Config.server.dm_port + '/v1/files/'
+const opvSt = opv + ':' + Config.server.status_port + '/'
 
 export default class ApiManager {
   static getCampaignList () {

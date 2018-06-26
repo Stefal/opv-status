@@ -6,13 +6,15 @@
 </template>
 
 <script>
+import Config from '@/config.json'
+
 export default {
   name: 'LotInfo',
   data () {
     return {
       lot: null,
       img: [],
-      imgNb: 6
+      imgNb: Config.picture
     }
   },
   methods: {
