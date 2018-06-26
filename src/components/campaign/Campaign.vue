@@ -1,14 +1,28 @@
 <template>
-   <div>
-     <CampaignInfo v-bind:lots="lots" v-bind:campaign="campaign"></CampaignInfo>
-     <div class="column">
-       <LotList ref="lotList" style="width: 10%" v-bind:lots="lots"></LotList>
-       <div class="row" style="width: 100%">
-         <MapCampaign ref="map" style="width: 100%; height: 500px;" v-bind:lots="lots"></MapCampaign>
-         <LotInfo ref="lotInfo"></LotInfo>
-       </div>
-     </div>
-   </div>
+  <v-app>
+    <v-container fluid fill-height>
+      <v-layout align-center justify-center>
+        <v-flex>
+          <v-card class="elevation-12">
+            <CampaignInfo v-bind:lots="lots" v-bind:campaign="campaign"></CampaignInfo>
+            <v-card-text>
+              <v-container fluid grid-list-sm>
+                <v-layout row wrap>
+                  <v-flex style="height: 80vh">
+                    <MapCampaign ref="map" v-bind:lots="lots" style="height: 60vh"></MapCampaign>
+                    <LotInfo class="mt-1" ref="lotInfo" style="height: 20vh"></LotInfo>
+                  </v-flex>
+                  <v-flex xs1>
+                    <LotList ref="lotList" v-bind:lots="lots"></LotList>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
+  </v-app>
 </template>
 
 <script>
@@ -49,16 +63,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.column{
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-.row{
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-</style>

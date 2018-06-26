@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <l-map ref='map' :zoom='zoom' :center='center'>
+  <v-card style="height: 100%">
+    <l-map ref='map' :zoom='zoom' :center='center' style="height: 100%">
       <l-tile-layer :url='url' :attribution='attribution'></l-tile-layer>
       <l-circle-marker v-for='lot in lots' :ref="lot.id_lot" :key='lot.id_lot' :lat-lng='genCord(lot.sensors)' :fillColor='color(lot)' :color='color(lot)' v-on:click='clicked(lot)'></l-circle-marker>
     </l-map>
-  </div>
+  </v-card>
 </template>
 
 <script>
@@ -36,7 +36,7 @@ export default {
     },
     clicked (elmt) {
       this.$refs.map.setCenter(L.latLng(elmt.sensors.gps_pos.coordinates[0], elmt.sensors.gps_pos.coordinates[1]))
-      this.$parent.$refs.lotInfo.setLot(elmt)
+      this.$parent.$parent.$parent.$refs.lotInfo.setLot(elmt)
     },
     color (elmt) {
       var color = Config.color.assembled

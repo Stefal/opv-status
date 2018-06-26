@@ -7,19 +7,7 @@
             <v-toolbar dark color="primary">
               <v-toolbar-title>Spark</v-toolbar-title>
               <v-spacer></v-spacer>
-              <v-menu bottom left>
-                <v-btn slot="activator" icon dark>
-                  <v-icon>more</v-icon>
-                </v-btn>
-                <v-list>
-                  <v-list-tile>
-                    <router-link to="/"><v-list-tile-title>List</v-list-tile-title></router-link>
-                  </v-list-tile>
-                  <v-list-tile>
-                    <router-link to="/import/"><v-list-tile-title>Import Data</v-list-tile-title></router-link>
-                  </v-list-tile>
-                </v-list>
-              </v-menu>
+              <Menu :where="'Spark'"></Menu>
             </v-toolbar>
             <v-card-text>
               <v-container fluid grid-list-sm>
@@ -46,17 +34,17 @@
                         <v-list>
                           <v-list-tile>
                             <v-list-tile-content>Answer:</v-list-tile-content>
-                            <v-list-tile-content>{{answer}}</v-list-tile-content>
+                            <v-list-tile-content class="align-end">{{answer}}</v-list-tile-content>
                           </v-list-tile>
                           <v-divider></v-divider>
                           <v-list-tile>
                             <v-list-tile-content>Number:</v-list-tile-content>
-                            <v-list-tile-content>{{number}}</v-list-tile-content>
+                            <v-list-tile-content class="align-end">{{number}}</v-list-tile-content>
                           </v-list-tile>
                           <v-divider></v-divider>
                           <v-list-tile>
                             <v-list-tile-content>Spark port:</v-list-tile-content>
-                            <v-list-tile-content>{{sparkApiPort}}</v-list-tile-content>
+                            <v-list-tile-content class="align-end">{{sparkApiPort}}</v-list-tile-content>
                           </v-list-tile>
                         </v-list>
                       </v-card-text>
@@ -108,9 +96,13 @@
 
 <script>
 import ApiManager from '@/apiManager'
+import Menu from '@/components/Menu'
 
 export default {
   name: 'Spark',
+  components: {
+    Menu
+  },
   props: ['id_campaign', 'id_malette'],
 
   data () {

@@ -7,19 +7,7 @@
             <v-toolbar dark color="primary">
               <v-toolbar-title>Import data</v-toolbar-title>
               <v-spacer></v-spacer>
-              <v-menu bottom left>
-                <v-btn slot="activator" icon dark>
-                  <v-icon>more</v-icon>
-                </v-btn>
-                <v-list>
-                  <v-list-tile>
-                    <router-link to="/"><v-list-tile-title>List</v-list-tile-title></router-link>
-                  </v-list-tile>
-                  <v-list-tile>
-                    <router-link to="/spark/"><v-list-tile-title>Spark</v-list-tile-title></router-link>
-                  </v-list-tile>
-                </v-list>
-              </v-menu>
+              <Menu :where="'Import data'"></Menu>
             </v-toolbar>
             <v-card-text>
               <v-container fluid grid-list-sm>
@@ -109,9 +97,13 @@
 
 <script>
 import ApiManager from '@/apiManager'
+import Menu from '@/components/Menu'
 
 export default {
   name: 'ImportCampaign',
+  components: {
+    Menu
+  },
   data () {
     return {
       number: 0,

@@ -7,19 +7,7 @@
             <v-toolbar dark color="primary">
               <v-toolbar-title>Campaign list</v-toolbar-title>
               <v-spacer></v-spacer>
-              <v-menu bottom left>
-                <v-btn slot="activator" icon dark>
-                  <v-icon>more</v-icon>
-                </v-btn>
-                <v-list>
-                  <v-list-tile>
-                    <router-link to="/import/"><v-list-tile-title>Import Data</v-list-tile-title></router-link>
-                  </v-list-tile>
-                  <v-list-tile>
-                    <router-link to="/spark/"><v-list-tile-title>Spark</v-list-tile-title></router-link>
-                  </v-list-tile>
-                </v-list>
-              </v-menu>
+              <Menu :where="'List'"></Menu>
             </v-toolbar>
             <v-card-text>
               <v-data-table :headers="headers" :items="campaigns" item-key="id_campaign" hide-actions class="elevation-1" no-data>
@@ -56,9 +44,13 @@
 
 <script>
 import ApiManager from '@/apiManager'
+import Menu from '@/components/Menu'
 
 export default {
   name: 'CampaignList',
+  components: {
+    Menu
+  },
   data () {
     return {
       campaigns: [],

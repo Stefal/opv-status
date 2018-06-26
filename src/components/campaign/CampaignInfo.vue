@@ -1,17 +1,26 @@
 <template>
-   <div>
-     <h1>Campaign : {{ campaign.id_campaign }}-{{ campaign.id_malette }} -->  {{ campaign.name }}</h1>
-     <p>Assembled : {{ assemledPourcent }}% Geoloc : {{ geolocPourcent }}% <span v-on:click='calculateCompletPourcent()'>Complet : {{ completPourcent }}</span></p>
-   </div>
+  <v-toolbar dark color="primary">
+    <v-toolbar-title>{{ campaign.name }}</v-toolbar-title>
+    <v-toolbar-title>{{ campaign.id_campaign }} - {{ campaign.id_malette }}</v-toolbar-title>
+    <v-spacer></v-spacer>
+    <v-toolbar-title>Assembled : {{ assemledPourcent }}%</v-toolbar-title>
+    <v-toolbar-title>Geoloc : {{ geolocPourcent }}%</v-toolbar-title>
+    <v-toolbar-title @click='calculateCompletPourcent()'>Complet : {{ completPourcent }}</v-toolbar-title>
+    <Menu></Menu>
+  </v-toolbar>
 </template>
 
 <script>
 import ApiManager from '@/apiManager'
 import Config from '@/config.json'
+import Menu from '@/components/Menu'
 
 export default {
   name: 'CampaignInfo',
   props: ['lots', 'campaign'],
+  components: {
+    Menu
+  },
 
   data () {
     return {
@@ -72,8 +81,8 @@ export default {
         if (answer.data.length >= this.minPic) {
           this.completLot++
         } else {
-          this.$parent.$refs.map.setIncomplet(lot.id_lot)
-          this.$parent.$refs.lotList.setIncomplet(lot.id_lot)
+          this.$parent.$parent.$parent.$refs.lotList.setIncomplet(lot.id_lot)
+          this.$parent.$parent.$parent.$refs.map.setIncomplet(lot.id_lot)
         }
       })
     }
