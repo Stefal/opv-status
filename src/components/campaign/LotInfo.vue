@@ -38,7 +38,8 @@ export default {
     return {
       lot: null,
       img: [],
-      imgNb: Config.picture
+      imgNb: Config.picture,
+      picturesPath: Config.server.host + ':' + Config.server.dm_port + '/v1/files/'
     }
   },
   methods: {
@@ -46,7 +47,7 @@ export default {
       this.lot = lot
       this.img = []
       for (var i = 0; i < this.imgNb; i++) {
-        this.img.push(('http://opv_master:5050/v1/files/' + lot.pictures_path + '/APN' + i + '.JPG'))
+        this.img.push((this.picturesPath + lot.pictures_path + '/APN' + i + '.JPG'))
       }
     }
   }
