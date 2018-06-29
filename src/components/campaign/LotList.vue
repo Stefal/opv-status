@@ -1,11 +1,16 @@
 <template>
-   <div>
-     <h2>Lot list :</h2>
-     <ul>
-       <li v-for="lot in lots" v-bind:class="classToUse(lot)" v-bind:key="lot.id_lot">{{lot.id_lot}}
-         <router-link v-if="lot.tile.id_tile !== null" :to="'/viewer/' + lot.tile.id_tile + '/' + lot.id_malette">See</router-link></li>
-     </ul>
-   </div>
+   <v-card style="height: 80.5vh" class="scroll-y">
+     <v-toolbar dark color="primary">
+       <v-toolbar-title>Lot list</v-toolbar-title>
+     </v-toolbar>
+     <v-list>
+      <v-list-tile v-for="lot in lots" :key="lot.id_lot" @click="clicked(lot)">
+        <v-list-tile-content>{{lot.id_lot}}</v-list-tile-content>
+        <v-icon :ref="lot.id_lot" v-if="lot.tile.id_tile !== null" color="green">camera</v-icon>
+        <v-icon :ref="lot.id_lot" v-else color="blue">camera</v-icon>
+      </v-list-tile>
+    </v-list>
+   </v-card>
 </template>
 
 <script>
@@ -16,21 +21,13 @@ export default {
     return {}
   },
   methods: {
-    classToUse: function (elmt) {
-      if (elmt.tile.id_tile == null) {
-        return 'bad'
-      }
-      return 'good'
+    setIncomplet: function (id) {
+      this.$refs[id][0].classList.remove('blue--text')
+      this.$refs[id][0].classList.add('red--text')
+    },
+    clicked: function (lot) {
+      this.$parent.$parent.$parent.$refs.lotInfo.setLot(lot)
     }
   }
 }
 </script>
-
-<style>
-.bad{
-  background-color: red;
-}
-.good{
-  background-color: green;
-}
-</style>
