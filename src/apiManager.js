@@ -13,8 +13,8 @@ export default class ApiManager {
   static getCampaign (idCampaign, idMalette) {
     return axios.get(opvApi + 'campaign/' + idCampaign + '/' + idMalette)
   }
-  static getLotWithSensors (idLot, idMalette) {
-    return axios.get(opvApi + 'lot/with_sensors/' + idLot + '/' + idMalette)
+  static getCampaignLotsWithSensors (idCampaign) {
+    return axios.get(opvApi + 'lot/with_sensors?id_campaign=' + idCampaign)
   }
   static getLotPicturesPath (path) {
     return axios.get(opvDb + path)

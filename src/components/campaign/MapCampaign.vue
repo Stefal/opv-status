@@ -1,6 +1,6 @@
 <template>
   <v-card style="height: 100%">
-    <l-map ref='map' :zoom='zoom' :center='center' style="height: 100%">
+    <l-map ref='map' :zoom='zoom' :options='options' :center='center' style="height: 100%">
       <l-tile-layer :url='url' :attribution='attribution'></l-tile-layer>
       <l-circle-marker v-for='lot in lots' :ref="lot.id_lot" :key='lot.id_lot' :lat-lng='genCord(lot.sensors)' :fillColor='color(lot)' :color='color(lot)' v-on:click='clicked(lot)'></l-circle-marker>
     </l-map>
@@ -26,7 +26,10 @@ export default {
     return {
       zoom: 19,
       url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      options: {
+        preferCanvas: true
+      }
     }
   },
   methods: {
