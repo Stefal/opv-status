@@ -43,4 +43,7 @@ export default class ApiManager {
   static getSparkJob (port, app) {
     return axios.get(opv + ':' + port + '/api/v1/applications/' + app + '/jobs')
   }
+  static putSensors (sensors) {
+    return axios.put(opvApi + 'sensors/' + sensors.id_sensors + '/' + sensors.id_malette, sensors)
+  }
 }
