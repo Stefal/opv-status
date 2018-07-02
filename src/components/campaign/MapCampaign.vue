@@ -2,16 +2,16 @@
   <v-card style="height: 100%">
     <l-map ref='map' :zoom='zoom' :center='center' style="height: 100%">
       <l-tile-layer ref="test" :url='url' :options='tileOption' :attribution='attribution'></l-tile-layer>
-      <l-circle-marker v-for='lot in lots' :ref="lot.id_lot" :key='lot.id_lot' :lat-lng='genCord(lot.sensors)' :fillColor='color(lot)' :color='color(lot)' v-on:click='clicked(lot)'></l-circle-marker>
+      <l-marker v-for='lot in lots' :options='{sensors: lot.sensors}' :draggable="true" :key='lot.id_lot' :icon='genIcon(lot)' :lat-lng='genCord(lot.sensors)' v-on:click='clicked(lot)' @dragend='markerMove'></l-marker>
     </l-map>
   </v-card>
 </template>
 
 <script>
 import '@/../node_modules/leaflet/dist/leaflet.css'
-import { LMap, LCircleMarker, LPopup, LTileLayer } from 'vue2-leaflet'
+import { LMap, LMarker, LPopup, LTileLayer } from 'vue2-leaflet'
 import L from 'leaflet'
-import Config from '@/config.json'
+import ApiManager from '@/apiManager'
 
 export default {
   name: 'MapCampaign',
@@ -19,7 +19,7 @@ export default {
   components: {
     LMap,
     LTileLayer,
-    LCircleMarker,
+    LMarker,
     LPopup
   },
   data () {
@@ -30,7 +30,8 @@ export default {
       tileOption: {
         maxNativeZoom: 19,
         maxZoom: 25
-      }
+      },
+      badLot: []
     }
   },
   methods: {
@@ -38,22 +39,29 @@ export default {
       var cord = L.latLng(elmt.gps_pos.coordinates[0], elmt.gps_pos.coordinates[1])
       return cord
     },
+    genIcon (lot) {
+      var icon = L.icon({iconUrl: require('@/assets/marker_not_assembled.png'), iconSize: [40, 40], iconAnchor: [20, 20]})
+      if (lot.tile.id_tile != null) {
+        icon.options.iconUrl = require('@/assets/marker_assembled.png')
+      }
+      if (lot.id_lot in this.badLot) {
+        icon.options.iconUrl = require('@/assets/marker_not_full.png')
+      }
+      return icon
+    },
     clicked (elmt) {
       this.$refs.map.setCenter(L.latLng(elmt.sensors.gps_pos.coordinates[0], elmt.sensors.gps_pos.coordinates[1]))
       this.$parent.$parent.$parent.$refs.lotInfo.setLot(elmt)
     },
-    color (elmt) {
-      var color = Config.color.assembled
-
-      if (elmt.tile.id_tile == null) {
-        color = Config.color.unassembled
-      }
-
-      return color
-    },
     setIncomplet (id) {
-      this.$refs[id][0].setColor(Config.color.not_full)
-      this.$refs[id][0].setFillColor(Config.color.not_full)
+      this.badLot.push(id)
+    },
+    markerMove (event) {
+      var pos = event.target.getLatLng()
+      var newSensors = event.target.options.sensors
+      newSensors.gps_pos.coordinates[0] = pos.lat
+      newSensors.gps_pos.coordinates[1] = pos.lng
+      ApiManager.putSensors(newSensors)
     }
   },
   computed: {

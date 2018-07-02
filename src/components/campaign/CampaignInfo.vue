@@ -77,14 +77,28 @@ export default {
       }
     },
     isComplet: function (lot) {
-      ApiManager.getLotPicturesPath(lot.pictures_path).then(answer => {
-        if (answer.data.length >= this.minPic) {
-          this.completLot++
-        } else {
-          this.$parent.$parent.$parent.$refs.lotList.setIncomplet(lot.id_lot)
-          this.$parent.$parent.$parent.$refs.map.setIncomplet(lot.id_lot)
-        }
-      })
+      ApiManager.getLotPicturesPath(lot.pictures_path)
+        .then(answer => {
+          var ok = false
+          for (var thing in answer.data) {
+            thing = answer.data[thing]
+            if (thing === 'APN' + (this.minPic - 1) + '.JPG') {
+              ok = true
+            }
+          }
+          if (ok) {
+            this.completLot++
+          } else {
+            this.setBad(lot)
+          }
+        })
+        .catch(answer => {
+          this.setBad(lot)
+        })
+    },
+    setBad: function (lot) {
+      this.$parent.$parent.$parent.$refs.lotList.setIncomplet(lot.id_lot)
+      this.$parent.$parent.$parent.$refs.map.setIncomplet(lot.id_lot)
     }
   }
 }

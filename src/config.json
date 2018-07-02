@@ -5,10 +5,5 @@
     "dm_port": 5050,
     "status_port": 5001
   },
-  "color": {
-    "assembled": "#77CC77",
-    "unassembled": "#3388FF",
-    "not_full": "#FF3333"
-  },
   "picture": 6
 }
