@@ -1,5 +1,5 @@
 <template>
-   <v-card style="height: 80.5vh" class="scroll-y">
+   <v-card class="scroll-y">
      <v-toolbar dark color="primary">
        <v-toolbar-title>Lot list</v-toolbar-title>
      </v-toolbar>

@@ -15,8 +15,8 @@
                   <v-flex>
                     <v-card>
                       <v-card-text>
-                        <v-text-field ref='campaignId' label='Campaign id'></v-text-field>
-                        <v-text-field ref='maletteId' label='Malette id'></v-text-field>
+                        <v-text-field ref='campaignId' label='Campaign id' :value="id_campaign"></v-text-field>
+                        <v-text-field ref='maletteId' label='Malette id' :value="id_malette"></v-text-field>
                         <v-text-field ref='customLaunchScript' label='Custom launch script'></v-text-field>
                       </v-card-text>
                     </v-card>
@@ -112,12 +112,6 @@ export default {
       scanTimeout: null,
       sparkApiPort: [],
       number: 0
-    }
-  },
-  mounted () {
-    if (this.id_campaign != null && this.id_malette != null) {
-      this.$refs.campaignId.$refs.input.value = this.id_campaign
-      this.$refs.maletteId.$refs.input.value = this.id_malette
     }
   },
   methods: {
