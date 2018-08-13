@@ -10,7 +10,7 @@
              <v-toolbar dark color="primary">
                <v-toolbar-title>Lot : {{lot.id_lot}}</v-toolbar-title>
                <v-spacer></v-spacer>
-               <router-link v-if="lot.tile.id_tile !== null" :to="'/viewer/' + lot.tile.id_tile + '/' + lot.id_malette"><v-icon>panorama_horizontal</v-icon></router-link>
+               <router-link v-if="lot.tile.id_tile !== null" :to="'/viewer/' + lot.id_lot + '/' + lot.id_malette"><v-icon>panorama_horizontal</v-icon></router-link>
              </v-toolbar>
              <v-list>
                <v-list-tile>

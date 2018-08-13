@@ -19,6 +19,12 @@ export default class ApiManager {
   static getLotPicturesPath (path) {
     return axios.get(opvDb + path)
   }
+  static getLot (idLot, idMalette) {
+    return axios.get(opvApi + 'lot/' + idLot + '/' + idMalette)
+  }
+  static getSensors (idSensors, idMalette) {
+    return axios.get(opvApi + 'sensors/' + idSensors + '/' + idMalette)
+  }
   static getTile (idTile, idMalette) {
     return axios.get(opvApi + 'tile/' + idTile + '/' + idMalette)
   }

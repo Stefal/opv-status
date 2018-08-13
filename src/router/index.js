@@ -22,7 +22,7 @@ export default new Router({
       component: Campaign
     },
     {
-      path: '/viewer/:id_tile/:id_malette',
+      path: '/viewer/:id_lot/:id_malette',
       props: true,
       name: 'Viewer',
       component: PanoViewer
