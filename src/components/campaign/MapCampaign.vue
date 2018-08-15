@@ -2,27 +2,34 @@
   <v-card style="height: 100%">
     <l-map ref='map' :zoom='zoom' :center='center' style="height: 100%">
       <l-tile-layer ref="test" :url='url' :options='tileOption' :attribution='attribution'></l-tile-layer>
-      <l-rotated-marker :rotationAngle="180 + lot.sensors.degrees + 90" v-for="lot in lots" :key="lot.id_lot"  :options='{sensors: lot.sensors}' :draggable="true" :icon='genIcon(lot)' :lat-lng='genCord(lot.sensors)' v-on:click='clicked(lot)' @dragend='markerMove'></l-rotated-marker>
+      <l-marker v-for='lm in lotMarkers' :options='lm.options' :draggable="true" :key='lm.key' :icon='lm.icon' :lat-lng='lm.pos' v-on:click='emitSelectedLot(lm.lot)' @dragend='markerMove'></l-marker>
     </l-map>
   </v-card>
 </template>
 
 <script>
 import '@/../node_modules/leaflet/dist/leaflet.css'
-import { LMap, LPopup, LTileLayer, LPolyline } from 'vue2-leaflet'
-import LRotatedMarker from 'vue2-leaflet-rotatedmarker'
+import { LMap, LMarker, LPopup, LTileLayer } from 'vue2-leaflet'
 import L from 'leaflet'
 import ApiManager from '@/apiManager'
 
 export default {
   name: 'MapCampaign',
-  props: ['lots'],
+  props: {
+    lots: {
+      type: Array,
+      default: () => []
+    },
+    selectedLot: {
+      type: Object,
+      default: null
+    }
+  },
   components: {
     LMap,
     LTileLayer,
-    LPopup,
-    LPolyline,
-    LRotatedMarker
+    LMarker,
+    LPopup
   },
   data () {
     return {
@@ -33,28 +40,26 @@ export default {
         maxNativeZoom: 19,
         maxZoom: 25
       },
-      badLot: []
+      badLot: [],
+      // -- Icon used to display lot depending on their state
+      lotIcons: {
+        selected: L.icon({iconUrl: require('@/assets/markers/marker-icon-red.png'), iconSize: [25, 41], iconAnchor: [12, 41]}),
+        inactive: L.icon({iconUrl: require('@/assets/markers/marker-icon-grey.png'), iconSize: [25, 41], iconAnchor: [12, 41]}),
+        stitched: L.icon({iconUrl: require('@/assets/markers/marker-icon-green.png'), iconSize: [25, 41], iconAnchor: [12, 41]}),
+        unstitched: L.icon({iconUrl: require('@/assets/markers/marker-icon-black.png'), iconSize: [25, 41], iconAnchor: [12, 41]})
+      }
     }
   },
   methods: {
-    genCord (elmt) {
-      var cord = L.latLng(elmt.gps_pos.coordinates[0], elmt.gps_pos.coordinates[1])
-      return cord
+    /**
+     * Triggered when a lot is selected, will pass the information to the parent component.
+     * @param lot The new selected lot.
+     */
+    emitSelectedLot (lot) {
+      // to respect VueJS logic we are giving parent the choice to update or not, we don't want to mutate the parent
+      this.$emit('update:selected-lot', lot)
     },
-    genIcon (lot) {
-      var icon = L.icon({iconUrl: require('@/assets/marker_not_assembled.png'), iconSize: [40, 40], iconAnchor: [20, 20]})
-      if (lot.tile.id_tile != null) {
-        icon.options.iconUrl = require('@/assets/marker_assembled.png')
-      }
-      if (lot.id_lot in this.badLot) {
-        icon.options.iconUrl = require('@/assets/marker_not_full.png')
-      }
-      return icon
-    },
-    clicked (elmt) {
-      this.$refs.map.setCenter(L.latLng(elmt.sensors.gps_pos.coordinates[0], elmt.sensors.gps_pos.coordinates[1]))
-      this.$parent.$parent.$parent.$refs.lotInfo.setLot(elmt)
-    },
+
     setIncomplet (id) {
       this.badLot.push(id)
     },
@@ -81,6 +86,31 @@ export default {
         pos = L.latLng(this.lots[i].sensors.gps_pos.coordinates[0], this.lots[i].sensors.gps_pos.coordinates[1])
       }
       return pos
+    },
+
+    /**
+     *Translate lot into markers, set the correct icon.
+     */
+    lotMarkers () {
+      return this.lots.map(lot => {
+        const lotIcon = (lot === this.selectedLot) ? this.$data.lotIcons.selected
+          : (lot.active === false) ? this.$data.lotIcons.inactive
+            : (lot.active === true) ? this.$data.lotIcons.active
+              : (lot.tile.id_tile != null) ? this.$data.lotIcons.stitched
+                : this.$data.lotIcons.unstitched
+
+        const lotPos = L.latLng(lot.sensors.gps_pos.coordinates[0], lot.sensors.gps_pos.coordinates[1])
+
+        return {
+          options: {
+            sensors: lot.sensors
+          },
+          icon: lotIcon,
+          pos: lotPos,
+          key: lot.id_lot + '-' + lot.id_malette,
+          lot: lot
+        }
+      })
     }
   }
 }

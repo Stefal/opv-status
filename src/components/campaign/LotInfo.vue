@@ -20,10 +20,14 @@
                <v-list-tile-content>Gps cord :</v-list-tile-content>
                <v-list-tile-content class="align-end">{{lot.sensors.gps_pos.coordinates}}</v-list-tile-content>
              </v-list-tile>
+             <v-list-tile>
+                 <v-list-tile-content>Active :</v-list-tile-content>
+                 <v-list-tile-content class="align-end">{{lot.active}}</v-list-tile-content>
+               </v-list-tile>
            </v-list>
          </v-card>
          </v-layout>
-       </v-card-text>
+     </v-card-text>
    </v-card>
 </template>
 
@@ -32,6 +36,12 @@ import Config from '@/config.json'
 
 export default {
   name: 'LotInfo',
+  props: {
+    lot: { // Currently selectedLot
+      type: Object,
+      default: null
+    }
+  },
   data () {
     return {
       lot: null,
@@ -40,13 +50,20 @@ export default {
       picturesPath: Config.server.host + ':' + Config.server.dm_port + '/v1/files/'
     }
   },
-  methods: {
-    setLot (lot) {
-      this.lot = lot
-      this.img = []
+  computed: {
+    /**
+     *Get images details for currently selected lot.
+    */
+    img () {
+      const imgs = []
+
+      if (this.lot == null) return imgs
+
       for (var i = 0; i < this.imgNb; i++) {
-        this.img.push((this.picturesPath + lot.pictures_path + '/APN' + i + '.JPG'))
+        imgs.push((this.picturesPath + this.lot.pictures_path + '/APN' + i + '.JPG'))
       }
+
+      return imgs
     }
   }
 }
