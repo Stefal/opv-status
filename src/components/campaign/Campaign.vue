@@ -7,12 +7,15 @@
             <CampaignInfo v-bind:lots="lots" v-bind:campaign="campaign"></CampaignInfo>
             <v-card-text>
                 <v-layout row wrap>
+                  <v-flex xs12>
+                    <LotFilters v-on:update:predicate="lotFilterPredicate = $event"></LotFilters>
+                  </v-flex>
                   <v-flex style="height: 86vh">
-                    <MapCampaign ref="map" v-bind:lots="lots" style="height: 60vh" v-on:update:selected-lot="selectedLot = $event" v-bind:selected-lot="selectedLot"></MapCampaign>
-                    <LotInfo class="mt-1" ref="lotInfo" v-bind:lot="selectedLot" style="height: 26vh"></LotInfo>
+                    <MapCampaign ref="map" v-bind:lots="filteredLots" style="height: 60vh" v-on:update:selected-lot="selectedLot = $event" v-bind:selected-lot="selectedLot"></MapCampaign>
+                    <LotInfo class="mt-1" ref="lotInfo" v-bind:lot="selectedLot" style="height: 20vh"></LotInfo>
                   </v-flex>
                   <v-flex xs1>
-                    <LotList class="ml-1" style="height: 86.5vh" ref="lotList" v-bind:lots="lots" v-on:update:selected-lot="selectedLot = $event" v-bind:selected-lot="selectedLot"></LotList>
+                    <LotList class="ml-1" style="height: 86.5vh" ref="lotList" v-bind:lots="filteredLots" v-on:update:selected-lot="selectedLot = $event" v-bind:selected-lot="selectedLot"></LotList>
                   </v-flex>
                 </v-layout>
             </v-card-text>
@@ -28,6 +31,7 @@ import CampaignInfo from '@/components/campaign/CampaignInfo'
 import LotList from '@/components/campaign/LotList'
 import MapCampaign from '@/components/campaign/MapCampaign'
 import LotInfo from '@/components/campaign/LotInfo'
+import LotFilters from '@/components/campaign/LotFilters'
 import ApiManager from '@/apiManager'
 
 export default {
@@ -38,14 +42,16 @@ export default {
     LotList,
     MapCampaign,
     CampaignInfo,
-    LotInfo
+    LotInfo,
+    LotFilters
   },
 
   data () {
     return {
       campaign: {},
       lots: [],
-      selectedLot: null
+      selectedLot: null,
+      lotFilterPredicate: (lot) => true
     }
   },
 
@@ -56,6 +62,15 @@ export default {
         this.lots = lots.data.objects
       })
     })
+  },
+
+  computed: {
+    /**
+     * Filters lot according to the specified filter/predicate.
+     */
+    filteredLots () {
+      return this.lots.filter(this.lotFilterPredicate)
+    }
   }
 }
 </script>

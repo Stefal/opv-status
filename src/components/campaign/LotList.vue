@@ -36,7 +36,8 @@ export default {
       lotIcons: {
         selected: 'red',
         inactive: 'grey',
-        stitched: 'green',
+        active: 'green',
+        stitched: 'blue',
         unstitched: 'black'
       }
     }
