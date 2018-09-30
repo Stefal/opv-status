@@ -1,31 +1,29 @@
 <template>
    <v-card v-if="lot !== null">
-     <v-card-text>
-       <v-layout row wrap>
-         <v-flex>
-           <img v-for="i in img" v-bind:key="i" v-bind:src="i" class="apn">
-         </v-flex>
-         <v-flex>
-           <v-card>
-             <v-toolbar dark color="primary">
-               <v-toolbar-title>Lot : {{lot.id_lot}}</v-toolbar-title>
-               <v-spacer></v-spacer>
-               <router-link v-if="lot.tile.id_tile !== null" :to="'/viewer/' + lot.tile.id_tile + '/' + lot.id_malette"><v-icon>panorama_horizontal</v-icon></router-link>
-             </v-toolbar>
-             <v-list>
-               <v-list-tile>
-                 <v-list-tile-content>Date :</v-list-tile-content>
-                 <v-list-tile-content class="align-end">{{lot.takenDate}}</v-list-tile-content>
-               </v-list-tile>
-               <v-list-tile>
-                 <v-list-tile-content>Gps cord :</v-list-tile-content>
-                 <v-list-tile-content class="align-end">{{lot.sensors.gps_pos.coordinates}}</v-list-tile-content>
-               </v-list-tile>
-             </v-list>
-           </v-card>
-         </v-flex>
-       </v-layout>
-     </v-card-text>
+       <v-card-text>
+         <v-layout row wrap>
+         <v-layout row wrap class="mr-1">
+           <img v-for="i in img" :key="i" :src="i" class="apn">
+         </v-layout>
+         <v-card>
+           <v-toolbar dark color="primary">
+             <v-toolbar-title>Lot : {{lot.id_lot}}</v-toolbar-title>
+             <v-spacer></v-spacer>
+             <router-link v-if="lot.tile.id_tile !== null" :to="'/viewer/' + lot.tile.id_tile + '/' + lot.id_malette"><v-icon>panorama_horizontal</v-icon></router-link>
+           </v-toolbar>
+           <v-list>
+             <v-list-tile>
+               <v-list-tile-content>Date :</v-list-tile-content>
+               <v-list-tile-content class="align-end">{{lot.takenDate}}</v-list-tile-content>
+             </v-list-tile>
+             <v-list-tile>
+               <v-list-tile-content>Gps cord :</v-list-tile-content>
+               <v-list-tile-content class="align-end">{{lot.sensors.gps_pos.coordinates}}</v-list-tile-content>
+             </v-list-tile>
+           </v-list>
+         </v-card>
+         </v-layout>
+       </v-card-text>
    </v-card>
 </template>
 
@@ -54,8 +52,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .apn{
-  height: 17vh;
+  max-height: 23vh;
+  max-width: calc(45vw / 6)
 }
 </style>

@@ -6,17 +6,15 @@
           <v-card class="elevation-12">
             <CampaignInfo v-bind:lots="lots" v-bind:campaign="campaign"></CampaignInfo>
             <v-card-text>
-              <v-container fluid grid-list-sm>
                 <v-layout row wrap>
-                  <v-flex style="height: 80vh">
+                  <v-flex style="height: 86vh">
                     <MapCampaign ref="map" v-bind:lots="lots" style="height: 60vh"></MapCampaign>
-                    <LotInfo class="mt-1" ref="lotInfo" style="height: 20vh"></LotInfo>
+                    <LotInfo class="mt-1" ref="lotInfo" style="height: 26vh"></LotInfo>
                   </v-flex>
                   <v-flex xs1>
-                    <LotList ref="lotList" v-bind:lots="lots"></LotList>
+                    <LotList class="ml-1" style="height: 86.5vh" ref="lotList" v-bind:lots="lots"></LotList>
                   </v-flex>
                 </v-layout>
-              </v-container>
             </v-card-text>
           </v-card>
         </v-flex>

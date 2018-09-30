@@ -2,14 +2,15 @@
   <v-card style="height: 100%">
     <l-map ref='map' :zoom='zoom' :center='center' style="height: 100%">
       <l-tile-layer ref="test" :url='url' :options='tileOption' :attribution='attribution'></l-tile-layer>
-      <l-marker v-for='lot in lots' :options='{sensors: lot.sensors}' :draggable="true" :key='lot.id_lot' :icon='genIcon(lot)' :lat-lng='genCord(lot.sensors)' v-on:click='clicked(lot)' @dragend='markerMove'></l-marker>
+      <l-rotated-marker :rotationAngle="180 + lot.sensors.degrees + 90" v-for="lot in lots" :key="lot.id_lot"  :options='{sensors: lot.sensors}' :draggable="true" :icon='genIcon(lot)' :lat-lng='genCord(lot.sensors)' v-on:click='clicked(lot)' @dragend='markerMove'></l-rotated-marker>
     </l-map>
   </v-card>
 </template>
 
 <script>
 import '@/../node_modules/leaflet/dist/leaflet.css'
-import { LMap, LMarker, LPopup, LTileLayer } from 'vue2-leaflet'
+import { LMap, LPopup, LTileLayer, LPolyline } from 'vue2-leaflet'
+import LRotatedMarker from 'vue2-leaflet-rotatedmarker'
 import L from 'leaflet'
 import ApiManager from '@/apiManager'
 
@@ -19,8 +20,9 @@ export default {
   components: {
     LMap,
     LTileLayer,
-    LMarker,
-    LPopup
+    LPopup,
+    LPolyline,
+    LRotatedMarker
   },
   data () {
     return {
