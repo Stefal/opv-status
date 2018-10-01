@@ -59,7 +59,9 @@ export default {
     ApiManager.getCampaign(this.id_campaign, this.id_malette).then(answer => {
       this.campaign = answer.data
       ApiManager.getCampaignLotsWithSensors(answer.data.id_campaign).then(lots => {
-        this.lots = lots.data.objects
+        lots = lots.data.objects
+        lots.forEach(l => { l.isComplet = null })
+        this.lots = lots
       })
     })
   },

@@ -47,7 +47,8 @@ export default {
         inactive: L.icon({iconUrl: require('@/assets/markers/marker-icon-grey.png'), iconSize: [25, 41], iconAnchor: [12, 41]}),
         active: L.icon({iconUrl: require('@/assets/markers/marker-icon-green.png'), iconSize: [25, 41], iconAnchor: [12, 41]}),
         stitched: L.icon({iconUrl: require('@/assets/markers/marker-icon-blue.png'), iconSize: [25, 41], iconAnchor: [12, 41]}),
-        unstitched: L.icon({iconUrl: require('@/assets/markers/marker-icon-black.png'), iconSize: [25, 41], iconAnchor: [12, 41]})
+        unstitched: L.icon({iconUrl: require('@/assets/markers/marker-icon-black.png'), iconSize: [25, 41], iconAnchor: [12, 41]}),
+        uncomplet: L.icon({iconUrl: require('@/assets/markers/marker-icon-orange.png'), iconSize: [25, 41], iconAnchor: [12, 41]})
       }
     }
   },
@@ -93,12 +94,14 @@ export default {
      *Translate lot into markers, set the correct icon.
      */
     lotMarkers () {
+      console.log('lotMarkers')
       return this.lots.map(lot => {
         const lotIcon = (lot === this.selectedLot) ? this.$data.lotIcons.selected
           : (lot.active === false) ? this.$data.lotIcons.inactive
             : (lot.active === true) ? this.$data.lotIcons.active
-              : (lot.tile.id_tile != null) ? this.$data.lotIcons.stitched
-                : this.$data.lotIcons.unstitched
+              : (lot.isComplet === false) ? this.$data.lotIcons.uncomplet
+                : (lot.tile.id_tile != null) ? this.$data.lotIcons.stitched
+                  : this.$data.lotIcons.unstitched
 
         const lotPos = L.latLng(lot.sensors.gps_pos.coordinates[0], lot.sensors.gps_pos.coordinates[1])
 

@@ -11,6 +11,7 @@
         <v-icon :ref="lot.id_lot" v-if="lot === selectedLot" v-bind:color="lotIcons.selected">camera</v-icon>
         <v-icon :ref="lot.id_lot" v-else-if="lot.active === false" v-bind:color="lotIcons.inactive">camera</v-icon>
         <v-icon :ref="lot.id_lot" v-else-if="lot.active === true" v-bind:color="lotIcons.active">camera</v-icon>
+        <v-icon :ref="lot.id_lot" v-else-if="lot.isComplet === false" v-bind:color="lotIcons.uncomplete">camera</v-icon>
         <v-icon :ref="lot.id_lot" v-else-if="lot.tile.id_tile != null" v-bind:color="lotIcons.stitched">camera</v-icon>
         <v-icon :ref="lot.id_lot" v-else v-bind:color="lotIcons.unstitched">camera</v-icon>
       </v-list-tile>
@@ -38,7 +39,8 @@ export default {
         inactive: 'grey',
         active: 'green',
         stitched: 'blue',
-        unstitched: 'black'
+        unstitched: 'black',
+        uncomplete: 'orange'
       }
     }
   },

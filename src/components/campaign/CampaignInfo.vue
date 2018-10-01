@@ -79,14 +79,7 @@ export default {
     isComplet: function (lot) {
       ApiManager.getLotPicturesPath(lot.pictures_path)
         .then(answer => {
-          var ok = false
-          for (var thing in answer.data) {
-            thing = answer.data[thing]
-            if (thing === 'APN' + (this.minPic - 1) + '.JPG') {
-              ok = true
-            }
-          }
-          if (ok) {
+          if (answer.data.length === 6) {
             this.completLot++
           } else {
             this.setBad(lot)
@@ -97,6 +90,8 @@ export default {
         })
     },
     setBad: function (lot) {
+      console.log('Setting bad for : ', lot.id_lot)
+      lot.isComplet = false
       this.$parent.$parent.$parent.$refs.lotList.setIncomplet(lot.id_lot)
       this.$parent.$parent.$parent.$refs.map.setIncomplet(lot.id_lot)
     }
