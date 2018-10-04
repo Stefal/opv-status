@@ -4,10 +4,12 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import Vuetify from 'vuetify'
+import AsyncComputed from 'vue-async-computed'
 import '../node_modules/vuetify/dist/vuetify.min.css'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 
 Vue.config.productionTip = false
+Vue.use(AsyncComputed)
 Vue.use(Vuetify)
 
 /* eslint-disable no-new */
