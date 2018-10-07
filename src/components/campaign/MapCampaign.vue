@@ -23,6 +23,14 @@ export default {
     selectedLot: {
       type: Object,
       default: null
+    },
+    memento: { // Memento to be used to track sensors motification actions
+      type: Object,
+      default: null
+    },
+    autoCenterOnSelected: { // Will automatically center the map on the selected lot
+      type: Boolean,
+      default: false
     }
   },
   components: {
@@ -49,7 +57,8 @@ export default {
         stitched: L.icon({iconUrl: require('@/assets/markers/marker-icon-blue.png'), iconSize: [25, 41], iconAnchor: [12, 41]}),
         unstitched: L.icon({iconUrl: require('@/assets/markers/marker-icon-black.png'), iconSize: [25, 41], iconAnchor: [12, 41]}),
         uncomplet: L.icon({iconUrl: require('@/assets/markers/marker-icon-orange.png'), iconSize: [25, 41], iconAnchor: [12, 41]})
-      }
+      },
+      refreshMarkers: false // Toggle it to refresh all markers
     }
   },
   methods: {
@@ -66,28 +75,56 @@ export default {
       this.badLot.push(id)
     },
     markerMove (event) {
-      var pos = event.target.getLatLng()
-      var newSensors = event.target.options.sensors
-      newSensors.gps_pos.coordinates[0] = pos.lat
-      newSensors.gps_pos.coordinates[1] = pos.lng
-      ApiManager.putSensors(newSensors)
+      const pos = event.target.getLatLng();
+      const sensors = event.target.options.sensors;
+
+      // Saving old/new coodinates (copy native values as we don't know how object are referenced in leaflet)
+      const oldPosLat = sensors.gps_pos.coordinates[0];
+      const oldPostLon = sensors.gps_pos.coordinates[1];
+      const newPosLat = pos.lat;
+      const newPostLon = pos.lng;
+
+      const cmd = {
+        do: () => {
+          sensors.gps_pos.coordinates[0] = newPosLat;
+          sensors.gps_pos.coordinates[1] = newPostLon;
+          this.refreshMarkers = !this.refreshMarkers; // Ugly hack
+          ApiManager.putSensors(sensors);
+        },
+        undo: () => {
+          sensors.gps_pos.coordinates[0] = oldPosLat;
+          sensors.gps_pos.coordinates[1] = oldPostLon;
+          this.refreshMarkers = !this.refreshMarkers; // Ugly hack
+          ApiManager.putSensors(sensors);
+        }
+      };
+
+      if (this.memento !== null) { // Use memento if possible
+        this.memento.execute(cmd);
+      } else { // Directly execute command otherwise
+        cmd.do();
+      }
     }
   },
   computed: {
     center () {
-      var pos = L.latLng(0, 0)
+      if (this.autoCenterOnSelected) {
+        return L.latLng(this.selectedLot.sensors.gps_pos.coordinates[0], this.selectedLot.sensors.gps_pos.coordinates[1])
+      } else {
+        var pos = L.latLng(0, 0)
 
-      if (this.lots.length > 0) {
-        var i = 0
-        while (this.lots[i].sensors.gps_pos.coordinates[0] === 0 && this.lots[i].sensors.gps_pos.coordinates[1] === 0) {
-          i++
-          if (i >= this.lots.length) {
-            break
+        if (this.lots.length > 0) {
+          var i = 0
+          while (this.lots[i].sensors.gps_pos.coordinates[0] === 0 && this.lots[i].sensors.gps_pos.coordinates[1] === 0) {
+            i++
+            if (i >= this.lots.length) {
+              break
+            }
           }
+          pos = L.latLng(this.lots[i].sensors.gps_pos.coordinates[0], this.lots[i].sensors.gps_pos.coordinates[1])
         }
-        pos = L.latLng(this.lots[i].sensors.gps_pos.coordinates[0], this.lots[i].sensors.gps_pos.coordinates[1])
+        return pos
       }
-      return pos
     },
 
     /**
@@ -95,6 +132,9 @@ export default {
      */
     lotMarkers () {
       console.log('lotMarkers')
+
+      console.log('Refreshing markers : ', this.refreshMarkers)
+
       return this.lots.map(lot => {
         const lotIcon = (lot === this.selectedLot) ? this.$data.lotIcons.selected
           : (lot.active === false) ? this.$data.lotIcons.inactive

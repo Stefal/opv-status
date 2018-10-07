@@ -60,9 +60,7 @@
                   </v-layout>
                 </v-container>
                 <v-card style="height: 25vh">
-                  <l-map ref='map' :zoom='zoom' :center='center' style="height: 100%">
-                    <l-tile-layer ref="test" :url='url' :options='tileOption' :attribution='attribution'></l-tile-layer>
-                  </l-map>
+                  <MapCampaign ref="map" v-bind:lots="lots" auto-center-on-selected :memento="memento" style="height: 25vh" v-on:update:selected-lot="currentLot = $event" v-bind:selected-lot="currentLot"></MapCampaign>
                 </v-card>
               </template>
               <template v-else>
@@ -84,9 +82,7 @@
 
 <script>
 import ApiManager from '@/apiManager'
-import '@/../node_modules/leaflet/dist/leaflet.css'
-import { LMap, LMarker, LPopup, LTileLayer } from 'vue2-leaflet'
-import L from 'leaflet'
+import MapCampaign from '@/components/campaign/MapCampaign'
 import Menu from '@/components/Menu'
 import Memento from '@/helpers/memento'
 
@@ -95,10 +91,7 @@ export default {
   props: ['id_campaign', 'id_malette'],
   components: {
     Menu,
-    LMap,
-    LTileLayer,
-    LMarker,
-    LPopup
+    MapCampaign
   },
   data () {
     return {
@@ -109,14 +102,14 @@ export default {
         maxNativeZoom: 19,
         maxZoom: 25
       },
-      center: L.latLng(48.6312, -4.5427),
       dataLoaded: false,
       lots: [],
       active: null,
       currentLotIndex: -1,
       panoramasCache: {}, // Map lot id_lot-id_malette to their list of panoramas if they have one or null
       currentPanorama: null,
-      activeChangeStateFailed: false
+      activeChangeStateFailed: false,
+      memento: null
     }
   },
   async created () {
@@ -131,8 +124,19 @@ export default {
     /**
      * The current lot.
      */
-    currentLot () {
-      return (this.currentLotIndex >= 0) ? this.lots[this.currentLotIndex] : null;
+    currentLot: {
+      get: function () {
+        return (this.currentLotIndex >= 0) ? this.lots[this.currentLotIndex] : null;
+      },
+      set: function (lot) {
+        for (let i = 0; i < this.lots.length; i++) {
+          const l = this.lots[i]
+          if (lot.id_lot === l.id_lot && lot.id_malette === l.id_malette) {
+            this.currentLotIndex = i;
+            break;
+          }
+        }
+      }
     },
 
     /**
