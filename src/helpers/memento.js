@@ -26,6 +26,19 @@ export default class Memento {
   execute (command) {
     command.do();
     this.excutedHistoric.push(command);
+    this.unDoneHistoric = []; // Can replay actions after executing new ones
+
+    this.refreshState();
+  }
+
+  /**
+   * Process a command (with await / a synchronous)
+   * @param {command} command Command to be executed, should have a do and undo method.
+   */
+  async executeAsync (command) {
+    await command.do()
+    this.excutedHistoric.push(command);
+    this.unDoneHistoric = []; // Can replay actions after executing new ones
 
     this.refreshState();
   }

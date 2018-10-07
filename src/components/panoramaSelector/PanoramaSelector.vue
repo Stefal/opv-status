@@ -22,24 +22,43 @@
                     <v-icon>keyboard_arrow_left</v-icon>
                   </v-btn>
                   <v-divider vertical></v-divider>
-                    <v-text-field v-model="currentLotKey" label="lot ids"></v-text-field>
+                    <v-text-field v-model="currentLotKey" label="lot ids" hide-details></v-text-field>
                     <span style="display: inline-block; width: 290px;">
-                      <v-overflow-btn :items="currentPanos" hide-details value='Pano 10-42 (1/2)' full-width></v-overflow-btn>
+                        <v-select
+                          :items="panoramas"
+                          :item-text="(panorama) => { return `${panorama.id_panorama}-${panorama.id_malette}` }"
+                          :item-value="(panorama) => { return panorama }"
+                          v-model="selectedPanoramaMem"
+                          hide-details
+                          label="Panorama"
+                          v-if="hasPanoramas"
+                        ></v-select>
+                      <span v-else>No panorama</span>
                     </span>
+                  <template v-if="currentPanorama">
                     <v-checkbox flat
-                        :label="`${active===true ? 'active' : 'disable'}`"
-                        v-model="active"
+                        :label="`${activeStateMem===true ? 'active' : (activeStateMem == null) ? 'no set' : 'disable'}`"
+                        v-model="activeStateMem"
                         hide-details
+                        :indeterminate="activeStateMem == null"
                     ></v-checkbox>
-                  <v-btn flat>
-                    <v-icon>camera</v-icon>
-                  </v-btn>
+                    <v-btn flat :to="'/viewer/'+currentPanorama.tiles[0].id_tile+'/'+currentPanorama.tiles[0].id_malette">
+                      <v-icon>camera</v-icon>
+                    </v-btn>
+                  </template>
                   <v-divider vertical></v-divider>
                   <v-btn flat :disabled="!hasNextLot" v-on:click="goToNextLotMem()">
                     <v-icon>keyboard_arrow_right</v-icon>
                   </v-btn>
                 </v-toolbar>
-                <v-img src="http://opv_master:5050/v1/files/POC-432-0f679038-a92d-11e8-8a4a-00163e22b7fe/panorama.jpg"></v-img>
+                <v-img :src="currentEquirectangularPath+'?width=1100'" v-if="currentPanorama"></v-img>
+                <v-container v-else>
+                  <v-layout row wrap align-center>
+                    <v-flex class="text-xs-center">
+                      <div style="height:550px">Pas de panorama pour ce lot</div>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
                 <v-card style="height: 25vh">
                   <l-map ref='map' :zoom='zoom' :center='center' style="height: 100%">
                     <l-tile-layer ref="test" :url='url' :options='tileOption' :attribution='attribution'></l-tile-layer>
@@ -83,7 +102,6 @@ export default {
   },
   data () {
     return {
-      currentPanos: [ 'Pano 10-42 (1/2)', 'Pano 30-42 (2/2)' ],
       zoom: 19,
       url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -94,13 +112,17 @@ export default {
       center: L.latLng(48.6312, -4.5427),
       dataLoaded: false,
       lots: [],
-      active: true,
+      active: null,
       currentLotIndex: -1,
-      panoramasCache: {} // Map lot id_lot-id_malette to their list of panoramas if they have one or null
+      panoramasCache: {}, // Map lot id_lot-id_malette to their list of panoramas if they have one or null
+      currentPanorama: null,
+      activeChangeStateFailed: false
     }
   },
   async created () {
-    this.lots = (await ApiManager.getCampaignLotsWithSensors(this.id_campaign)).data.objects;
+    const lots = (await ApiManager.getCampaignLotsWithSensors(this.id_campaign)).data.objects;
+    lots.sort((la, lb) => { return (la.id_lot < lb.id_lot) ? -1 : 1; }); // As lot aren't correctly sorted
+    this.lots = lots;
     this.currentLotIndex = 0;
     this.dataLoaded = true;
     this.memento = new Memento(); // Undo/redo processor
@@ -124,7 +146,7 @@ export default {
         const i = this.lotIndexFromKey(wantedKey);
 
         if (i) {
-          this.currentLotIndex = i;
+          this.goToLotIndexMem(i); // Keep it in memento
         }
       }
     },
@@ -141,6 +163,50 @@ export default {
      */
     hasPrevLot () {
       return this.currentLotIndex - 1 >= 0;
+    },
+
+    /**
+     * Tells if the current lot as panorama.
+     */
+    hasPanoramas () {
+      return this.panoramas && this.panoramas.length > 0;
+    },
+
+    /**
+     * Current panorama http equirectangular path.
+     */
+    currentEquirectangularPath () {
+      return this.getEquirectangularPath(this.currentPanorama);
+    },
+
+    /**
+     * Current active state for currentPanorama, when setted will save it to database (roll back if it fails).
+     * It's based on internal event to handle asynchronous calls.
+    */
+    activeStateMem: {
+      get: function () {
+        return (this.currentPanorama) ? this.currentPanorama.active : null;
+      },
+      set: function (newState) {
+        this.changePanoramaActiveStateMem(this.currentPanorama, newState);
+      }
+    },
+
+    /**
+     * Return currentPanorama and use memento when it's changed.
+     */
+    selectedPanoramaMem: {
+      get: function () {
+        return this.currentPanorama;
+      },
+      set: function (requestedPanorama) {
+        const curP = this.currentPanorama;
+        const cmd = {
+          do: () => { this.currentPanorama = requestedPanorama },
+          undo: () => { this.currentPanorama = curP }
+        }
+        this.memento.execute(cmd);
+      }
     }
   },
   asyncComputed: {
@@ -151,29 +217,29 @@ export default {
      */
     async panoramas () {
       const lotKey = this.currentLotKey; // copy current key to ensure it doesn't change during requesting process
+      const panoramas = [];
 
       if (!lotKey) {
         return null;
       }
 
-      if (this.panoramasCache[lotKey]) {
-        return this.panoramasCache[lotKey]
-      }
+      if (!this.panoramasCache[lotKey]) {
+        // Getting contcurrentLotIndexrol points
+        for (const cpIds of this.currentLot.cps) {
+          const cp = (await ApiManager.getCp(cpIds.id_cp, cpIds.id_malette)).data
 
-      // Getting control points
-      const panoramas = []
-      for (const cpIds of this.currentLot.cps) {
-        const cp = (await ApiManager.getCp(cpIds.id_cp, cpIds.id_malette)).data
-
-        // Getting all pano for each cp
-        if (cp && cp.panorama) {
-          for (const panoIds of cp.panorama) {
-            const panorama = (await ApiManager.getPanorama(panoIds.id_panorama, panoIds.id_malette)).data
-            panoramas.push(panorama)
+          // Getting all pano for each cp
+          if (cp && cp.panorama) {
+            for (const panoIds of cp.panorama) {
+              const panorama = (await ApiManager.getPanorama(panoIds.id_panorama, panoIds.id_malette)).data
+              panoramas.push(panorama)
+            }
           }
         }
+        this.panoramasCache[lotKey] = panoramas;
       }
-      this.panoramasCache[lotKey] = panoramas;
+
+      this.currentPanorama = (this.panoramasCache[lotKey].length > 0) ? this.panoramasCache[lotKey][0] : null; // resetting current panorama to the first one
 
       return this.panoramasCache[lotKey];
     }
@@ -226,7 +292,7 @@ export default {
     },
 
     /**
-     * Go to next lot with memento.
+     * Go to ngoToLotIndexMemext lot with memento.
      */
     goToNextLotMem: function () {
       const cmd = {
@@ -245,6 +311,46 @@ export default {
         undo: () => { this.goToNextLot() }
       }
       this.memento.execute(cmd);
+    },
+
+    /**
+     * Go to specific lot index.
+     * @param {number} lotIndex Lot index.
+     */
+    goToLotIndexMem: function (lotIndex) {
+      const oldLotIndex = this.currentLotIndex;
+      const cmd = {
+        do: () => { this.currentLotIndex = lotIndex; },
+        undo: () => { this.currentLotIndex = oldLotIndex; }
+      };
+      this.memento.execute(cmd);
+    },
+
+    /**
+     * Returns equirectangular path.
+     * @param {Panorama} The panorama object.
+     */
+    getEquirectangularPath: function (panorama) {
+      return ApiManager.dirHttpPath(panorama.equirectangular_path) + '/panorama.jpg';
+    },
+
+    /**
+     * Change the panorama active state with memento.
+     */
+    changePanoramaActiveStateMem: async function (panorama, newActiveState) {
+      debugger;
+      const oldActiveState = panorama.active;
+      const cmd = {
+        do: async () => {
+          panorama.active = newActiveState
+          await ApiManager.putPanorama(panorama);
+        },
+        undo: async () => {
+          panorama.active = oldActiveState
+          await ApiManager.putPanorama(panorama);
+        }
+      };
+      await this.memento.executeAsync(cmd);
     }
   }
 }

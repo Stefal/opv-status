@@ -7,6 +7,9 @@ const opvDb = opv + ':' + Config.server.dm_port + '/v1/files/'
 const opvSt = opv + ':' + Config.server.status_port + '/'
 
 export default class ApiManager {
+  static dirHttpPath (dmUuid) {
+    return opvDb + dmUuid;
+  }
   static getCampaignList () {
     return axios.get(opvApi + 'campaign')
   }
@@ -21,6 +24,9 @@ export default class ApiManager {
   }
   static getPanorama (idPanorama, idMalette) {
     return axios.get(opvApi + 'panorama/' + idPanorama + '/' + idMalette)
+  }
+  static putPanorama (panorama) {
+    return axios.put(opvApi + 'panorama/' + panorama.id_panorama + '/' + panorama.id_malette, panorama)
   }
   static getLotPicturesPath (path) {
     return axios.get(opvDb + path)
