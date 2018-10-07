@@ -28,6 +28,9 @@ export default class ApiManager {
   static putPanorama (panorama) {
     return axios.put(opvApi + 'panorama/' + panorama.id_panorama + '/' + panorama.id_malette, panorama)
   }
+  static putLot (lot) {
+    return axios.put(opvApi + 'lot/' + lot.id_lot + '/' + lot.id_malette, lot)
+  }
   static getLotPicturesPath (path) {
     return axios.get(opvDb + path)
   }

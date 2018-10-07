@@ -188,7 +188,7 @@ export default {
         return (this.currentPanorama) ? this.currentPanorama.active : null;
       },
       set: function (newState) {
-        this.changePanoramaActiveStateMem(this.currentPanorama, newState);
+        this.changePanoramaActiveStateMem(this.currentPanorama, newState, this.currentLot);
       }
     },
 
@@ -217,6 +217,26 @@ export default {
      */
     async panoramas () {
       const lotKey = this.currentLotKey; // copy current key to ensure it doesn't change during requesting process
+
+      if (!lotKey) {
+        return null;
+      }
+
+      const panoramas = await this.getPanoramas(this.currentLot);
+
+      this.currentPanorama = (this.panoramasCache[lotKey].length > 0) ? this.panoramasCache[lotKey][0] : null; // resetting current panorama to the first one
+
+      return panoramas;
+    }
+  },
+  methods: {
+
+    /**
+     * Get panoramas from cache of server for a lot.
+     * @param {Lot} lot The lot.
+     */
+    getPanoramas: async function (lot) {
+      const lotKey = this.keyFromLot(lot); // copy current key to ensure it doesn't change during requesting process
       const panoramas = [];
 
       if (!lotKey) {
@@ -239,12 +259,9 @@ export default {
         this.panoramasCache[lotKey] = panoramas;
       }
 
-      this.currentPanorama = (this.panoramasCache[lotKey].length > 0) ? this.panoramasCache[lotKey][0] : null; // resetting current panorama to the first one
-
       return this.panoramasCache[lotKey];
-    }
-  },
-  methods: {
+    },
+
     /**
      * Generate key from lot.
      * @param {Lot} lot a lot.
@@ -337,20 +354,42 @@ export default {
     /**
      * Change the panorama active state with memento.
      */
-    changePanoramaActiveStateMem: async function (panorama, newActiveState) {
-      debugger;
+    changePanoramaActiveStateMem: async function (panorama, newActiveState, associatedLot) {
       const oldActiveState = panorama.active;
       const cmd = {
         do: async () => {
           panorama.active = newActiveState
           await ApiManager.putPanorama(panorama);
+          await this.refreshLotActiveState(associatedLot);
         },
         undo: async () => {
           panorama.active = oldActiveState
           await ApiManager.putPanorama(panorama);
+          await this.refreshLotActiveState(associatedLot);
         }
       };
       await this.memento.executeAsync(cmd);
+    },
+
+    /**
+     * Set lot active state. Will be active if it as active (undetermined panoramas).
+     * @param {Lot} lot Lot that will be refreshed.
+     */
+    refreshLotActiveState: async function (lot) {
+      const panoramas = await this.getPanoramas(lot);
+      let hasActiveOrNullPanorama = false;
+
+      for (let i = 0; i < panoramas.length; i++) {
+        if (panoramas[i].active === true || panoramas[i].active === null) {
+          hasActiveOrNullPanorama = true;
+          break;
+        }
+      }
+
+      if (lot.active !== hasActiveOrNullPanorama) { // updating lot active state if it changed
+        lot.active = hasActiveOrNullPanorama;
+        await ApiManager.putLot(lot);
+      }
     }
   }
 }
