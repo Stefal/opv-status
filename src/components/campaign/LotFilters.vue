@@ -33,6 +33,10 @@ export default {
       noTiles: true
     }
   },
+  created () {
+    const p = this.predicate; // to compute and initiate the predicate
+    return p;
+  },
   computed: {
     /**
      * This predicate is used to tell if a lot should be display (if it returns true lot should be displayed).

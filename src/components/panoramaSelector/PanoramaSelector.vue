@@ -119,6 +119,9 @@ export default {
     this.currentLotIndex = 0;
     this.dataLoaded = true;
     this.memento = new Memento(); // Undo/redo processor
+
+    // Adding shortcut events
+    window.document.addEventListener('keydown', this.keyboardShortcuts);
   },
   computed: {
     /**
@@ -394,6 +397,82 @@ export default {
         lot.active = hasActiveOrNullPanorama;
         await ApiManager.putLot(lot);
       }
+    },
+
+    /**
+     * Returns current panorama index.
+     */
+    getCurrentPanoramaIndex: function () {
+      for (let i = 0; i < this.panoramas.length; i++) {
+        if (this.currentPanorama === this.panoramas[i]) {
+          return i;
+        }
+      }
+    },
+
+    /**
+     * Go to next panorama.
+     */
+    gotToNextPanorama: function () {
+      const requestedIndex = this.getCurrentPanoramaIndex() + 1;
+      if (requestedIndex < this.panoramas.length) {
+        this.selectedPanoramaMem = this.panoramas[requestedIndex];
+      }
+    },
+
+    /**
+     * Go to next panorama.
+     */
+    goToPrevPanorama: function () {
+      const requestedIndex = this.getCurrentPanoramaIndex() - 1;
+      if (requestedIndex >= 0) {
+        this.selectedPanoramaMem = this.panoramas[requestedIndex];
+      }
+    },
+
+    /**
+     * Execute the appropriate keyboard shortcut.
+     * @param {KeyboardEvent} event Event keyboard.
+     */
+    keyboardShortcuts: function (event) {
+      // @see Navigation keys here : https://developer.mozilla.org/fr/docs/Web/API/KeyboardEvent/key/Key_Values
+
+      if (event.ctrlKey) {
+        this.keyboardCtrlShortcuts(event);
+        return;
+      }
+
+      switch (event.key) {
+        case 'ArrowLeft':
+          this.goToPrevLotMem();
+          break;
+        case 'ArrowRight':
+          this.goToNextLotMem();
+          break;
+        case 'ArrowDown':
+          this.gotToNextPanorama();
+          break;
+        case 'ArrowUp':
+          this.goToPrevPanorama();
+          break;
+        default:
+          return;
+      }
+      event.preventDefault();
+    },
+
+    keyboardCtrlShortcuts: function (event) {
+      switch (event.key) {
+        case 'z':
+          this.memento.undo();
+          break;
+        case 'y':
+          this.memento.redo();
+          break;
+        default:
+          return;
+      }
+      event.preventDefault();
     }
   }
 }
