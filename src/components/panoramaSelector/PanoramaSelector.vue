@@ -26,7 +26,7 @@
                     <span style="display: inline-block; width: 290px;">
                         <v-select
                           :items="panoramas"
-                          :item-text="(panorama) => { return `${panorama.id_panorama}-${panorama.id_malette}` }"
+                          :item-text="(panorama) => { return `${panorama.id_panorama}-${panorama.id_malette} - (${getPanoramaIndex(panorama)+1}/${panoramas.length})` }"
                           :item-value="(panorama) => { return panorama }"
                           v-model="selectedPanoramaMem"
                           hide-details
@@ -400,14 +400,23 @@ export default {
     },
 
     /**
-     * Returns current panorama index.
+     * Get panorama index.
+     * @param {Panorama} panorama a panorama of the currents lot panoramas.
+     * @return {number} the current panorama index.
      */
-    getCurrentPanoramaIndex: function () {
+    getPanoramaIndex: function (panorama) {
       for (let i = 0; i < this.panoramas.length; i++) {
-        if (this.currentPanorama === this.panoramas[i]) {
+        if (panorama === this.panoramas[i]) {
           return i;
         }
       }
+    },
+
+    /**
+     * Returns current panorama index.
+     */
+    getCurrentPanoramaIndex: function () {
+      return this.getPanoramaIndex(this.currentPanorama);
     },
 
     /**
@@ -454,6 +463,15 @@ export default {
           break;
         case 'ArrowUp':
           this.goToPrevPanorama();
+          break;
+        case 'a':
+          this.activeStateMem = true;
+          break;
+        case 'd':
+          this.activeStateMem = false;
+          break;
+        case 'n':
+          this.activeStateMem = null;
           break;
         default:
           return;
