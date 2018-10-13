@@ -44,8 +44,6 @@ export default {
   },
   data () {
     return {
-      lot: null,
-      img: [],
       imgNb: Config.picture,
       picturesPath: Config.server.host + ':' + Config.server.dm_port + '/v1/files/'
     }

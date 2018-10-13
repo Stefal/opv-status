@@ -7,10 +7,8 @@
             <CampaignInfo v-bind:lots="lots" v-bind:campaign="campaign"></CampaignInfo>
             <v-card-text>
                 <v-layout row wrap>
-                  <v-flex xs12>
-                    <LotFilters v-on:update:predicate="lotFilterPredicate = $event"></LotFilters>
-                  </v-flex>
                   <v-flex style="height: 86vh">
+                    <LotFilters v-on:update:predicate="lotFilterPredicate = $event"></LotFilters>
                     <MapCampaign ref="map" v-bind:lots="filteredLots" style="height: 60vh" v-on:update:selected-lot="selectedLot = $event" v-bind:selected-lot="selectedLot"></MapCampaign>
                     <LotInfo class="mt-1" ref="lotInfo" v-bind:lot="selectedLot" style="height: 20vh"></LotInfo>
                   </v-flex>
