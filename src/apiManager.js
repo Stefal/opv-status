@@ -7,6 +7,9 @@ const opvDb = opv + ':' + Config.server.dm_port + '/v1/files/'
 const opvSt = opv + ':' + Config.server.status_port + '/'
 
 export default class ApiManager {
+  static dirHttpPath (dmUuid) {
+    return opvDb + dmUuid;
+  }
   static getCampaignList () {
     return axios.get(opvApi + 'campaign')
   }
@@ -15,6 +18,18 @@ export default class ApiManager {
   }
   static getCampaignLotsWithSensors (idCampaign) {
     return axios.get(opvApi + 'lot/with_sensors?id_campaign=' + idCampaign)
+  }
+  static getCp (idCp, idMalette) {
+    return axios.get(opvApi + 'cp/' + idCp + '/' + idMalette)
+  }
+  static getPanorama (idPanorama, idMalette) {
+    return axios.get(opvApi + 'panorama/' + idPanorama + '/' + idMalette)
+  }
+  static putPanorama (panorama) {
+    return axios.put(opvApi + 'panorama/' + panorama.id_panorama + '/' + panorama.id_malette, panorama)
+  }
+  static putLot (lot) {
+    return axios.put(opvApi + 'lot/' + lot.id_lot + '/' + lot.id_malette, lot)
   }
   static getLotPicturesPath (path) {
     return axios.get(opvDb + path)
