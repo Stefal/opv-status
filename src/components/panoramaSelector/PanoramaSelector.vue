@@ -2,8 +2,8 @@
   <v-app>
     <v-container fluid fill-height>
       <v-layout align-center justify-center>
-        <v-flex xs7>
-          <v-card class="elevation-12" width="1100px" height="780px">
+        <v-flex >
+          <v-card>
             <v-toolbar dark color="primary">
               <v-toolbar-title>Panorama selector for campaign : {{id_campaign}} - {{id_malette}} </v-toolbar-title>
               <v-spacer></v-spacer>
@@ -51,11 +51,11 @@
                     <v-icon>keyboard_arrow_right</v-icon>
                   </v-btn>
                 </v-toolbar>
-                <v-img :src="currentEquirectangularPath+'?width=1100'" v-if="currentPanorama"></v-img>
+                <v-img style="height: 55vh" :src="currentEquirectangularPath+'?width=1100'" v-if="currentPanorama"></v-img>
                 <v-container v-else>
                   <v-layout row wrap align-center>
                     <v-flex class="text-xs-center">
-                      <div style="height:550px">Pas de panorama pour ce lot</div>
+                      <div style="height: 55vh">Pas de panorama pour ce lot</div>
                     </v-flex>
                   </v-layout>
                 </v-container>

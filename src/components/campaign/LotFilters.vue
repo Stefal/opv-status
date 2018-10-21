@@ -1,16 +1,14 @@
 <template>
-    <v-container grid-list-md style="padding-top:0px; padding-bottom:0px;">
-        <v-layout row align-center>
-            <v-flex xs6>
-                <b>Filters lots</b>
-            </v-flex>
-            <v-flex xs6><v-checkbox label='active' v-model="active" :color="lotIcons.active"></v-checkbox></v-flex>
-            <v-flex xs6><v-checkbox label='inactive' v-model="inactive" :color="lotIcons.inactive"></v-checkbox></v-flex>
-            <v-flex xs6><v-checkbox label='no active state' v-model="noState" color='black'></v-checkbox></v-flex>
-            <v-flex xs6><v-checkbox label='tiled' v-model="tiled" :color="lotIcons.stitched"></v-checkbox></v-flex>
-            <v-flex xs6><v-checkbox label='no tiles' v-model="noTiles" :color="lotIcons.unstitched"></v-checkbox></v-flex>
-        </v-layout>
-    </v-container>
+  <v-card>
+    <v-toolbar dark color="primary"><v-toolbar-title>Filter</v-toolbar-title></v-toolbar>
+    <v-list>
+      <v-list-tile><v-list-tile-content><v-checkbox label='active' v-model="active" :color="lotIcons.active"></v-checkbox></v-list-tile-content></v-list-tile>
+      <v-list-tile><v-list-tile-content><v-checkbox label='inactive' v-model="inactive" :color="lotIcons.inactive"></v-checkbox></v-list-tile-content></v-list-tile>
+      <v-list-tile><v-list-tile-content><v-checkbox label='no active state' v-model="noState" color='purple'></v-checkbox></v-list-tile-content></v-list-tile>
+      <v-list-tile><v-list-tile-content><v-checkbox label='tiled' v-model="tiled" :color="lotIcons.stitched"></v-checkbox></v-list-tile-content></v-list-tile>
+      <v-list-tile><v-list-tile-content><v-checkbox label='no tiles' v-model="noTiles" :color="lotIcons.unstitched"></v-checkbox></v-list-tile-content></v-list-tile>
+    </v-list>
+  </v-card>
 </template>
 
 <script>

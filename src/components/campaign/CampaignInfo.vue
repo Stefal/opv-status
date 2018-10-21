@@ -79,7 +79,14 @@ export default {
     isComplet: function (lot) {
       ApiManager.getLotPicturesPath(lot.pictures_path)
         .then(answer => {
-          if (answer.data.length === 6) {
+          var complet = false
+          for (var picture in answer.data) {
+            picture = answer.data[picture]
+            if (picture === 'APN' + (this.minPic - 1) + '.JPG') {
+              complet = true
+            }
+          }
+          if (complet) {
             this.completLot++
           } else {
             this.setBad(lot)

@@ -4,16 +4,16 @@
       <v-layout align-center justify-center>
         <v-flex>
           <v-card class="elevation-12">
-            <CampaignInfo v-bind:lots="lots" v-bind:campaign="campaign"></CampaignInfo>
+            <CampaignInfo style="z-index: 2" v-bind:lots="lots" v-bind:campaign="campaign"></CampaignInfo>
             <v-card-text>
                 <v-layout row wrap>
-                  <v-flex style="height: 86vh">
-                    <LotFilters v-on:update:predicate="lotFilterPredicate = $event"></LotFilters>
-                    <MapCampaign ref="map" v-bind:lots="filteredLots" style="height: 60vh" v-on:update:selected-lot="selectedLot = $event" v-bind:selected-lot="selectedLot"></MapCampaign>
-                    <LotInfo class="mt-1" ref="lotInfo" v-bind:lot="selectedLot" style="height: 20vh"></LotInfo>
-                  </v-flex>
-                  <v-flex xs1>
-                    <LotList class="ml-1" style="height: 86.5vh" ref="lotList" v-bind:lots="filteredLots" v-on:update:selected-lot="selectedLot = $event" v-bind:selected-lot="selectedLot"></LotList>
+                  <LotList class="mr-1" style="height: 85.5vh; z-index: 2" ref="lotList" v-bind:lots="filteredLots" v-on:update:selected-lot="selectedLot = $event" v-bind:selected-lot="selectedLot"></LotList>
+                  <v-flex style="height: 85vh">
+                    <v-layout>
+                      <MapCampaign ref="map" v-bind:lots="filteredLots" style="height: 60vh; width:90%; z-index: 1" v-on:update:selected-lot="selectedLot = $event" v-bind:selected-lot="selectedLot"></MapCampaign>
+                      <LotFilters  class="ml-1" style="height:60vh; width:10%; z-index: 2" v-on:update:predicate="lotFilterPredicate = $event"></LotFilters>
+                    </v-layout>
+                    <LotInfo class="mt-1" ref="lotInfo" v-bind:lot="selectedLot" style="height: 25vh; z-index: 2"></LotInfo>
                   </v-flex>
                 </v-layout>
             </v-card-text>
