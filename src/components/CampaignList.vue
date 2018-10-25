@@ -29,8 +29,11 @@
                       <router-link class="mr-1" :to="{ name: 'SparkValue', params: { id_campaign: props.item.id_campaign, id_malette: props.item.id_malette}}">
                         <v-btn color="primary">Stitch it</v-btn>
                       </router-link>
-                      <router-link :to="{ name: 'PanoramaSelector', params: { id_campaign: props.item.id_campaign, id_malette: props.item.id_malette}}">
+                      <router-link class="mr-1" :to="{ name: 'PanoramaSelector', params: { id_campaign: props.item.id_campaign, id_malette: props.item.id_malette}}">
                         <v-btn color="primary">Panorama selection</v-btn>
+                      </router-link>
+                      <router-link :to="{ name: 'PathDetailsViewer', params: { id_campaign: props.item.id_campaign, id_malette: props.item.id_malette}}">
+                        <v-btn color="primary">Path details</v-btn>
                       </router-link>
                       <v-spacer></v-spacer>
                     </v-card-actions>

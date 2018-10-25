@@ -61,4 +61,13 @@ export default class ApiManager {
   static putSensors (sensors) {
     return axios.put(opvApi + 'sensors/' + sensors.id_sensors + '/' + sensors.id_malette, sensors)
   }
+  static getPathDetailFromCampaign (idCampaign) {
+    return axios.get(opvApi + 'path_details?id_campaign=' + idCampaign)
+  }
+  static getPathNodeFromPathDetails (idPathDetails) {
+    return axios.get(opvApi + 'path_node?id_path_details=' + idPathDetails)
+  }
+  static postPathDetails (pathDetails) {
+    return axios.post(opvApi + 'path_details', pathDetails)
+  }
 }
