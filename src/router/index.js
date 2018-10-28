@@ -6,6 +6,7 @@ import PanoViewer from '@/components/PanoViewer'
 import ImportCampaign from '@/components/ImportCampaign'
 import Spark from '@/components/Spark'
 import PanoramaSelector from '@/components/panoramaSelector/PanoramaSelector'
+import PathDetailsViewer from '@/components/pathDetails/PathDetailsViewer'
 
 Vue.use(Router)
 
@@ -51,6 +52,12 @@ export default new Router({
       props: true,
       name: 'PanoramaSelector',
       component: PanoramaSelector
+    },
+    {
+      path: '/pathDetailsViewer/:id_campaign/:id_malette',
+      props: true,
+      name: 'PathDetailsViewer',
+      component: PathDetailsViewer
     }
   ]
 })
