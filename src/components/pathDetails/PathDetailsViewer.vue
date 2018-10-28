@@ -70,25 +70,28 @@ export default {
     }
   },
   created () {
-    if (this.id_campaign !== null && this.id_malette !== null) {
-      apiManager.getPathDetailFromCampaign(this.id_campaign)
-        .then((pathDetails) => {
-          this.pathDetails = pathDetails.data.objects
-          for (let pathDetail in this.pathDetails) {
-            this.getPathNode(this.pathDetails[pathDetail])
-          }
-        })
-    }
+    this.loadPathDetails();
   },
   methods: {
+    async loadPathDetails () {
+      if (this.id_campaign !== null && this.id_malette !== null) {
+        await apiManager.getPathDetailFromCampaign(this.id_campaign)
+          .then((pathDetails) => {
+            this.pathDetails = pathDetails.data.objects
+            for (let pathDetail in this.pathDetails) {
+              this.getPathNode(this.pathDetails[pathDetail])
+            }
+          })
+      }
+    },
     getPathNode (pathDetail) {
       apiManager.getPathNodeFromPathDetails(pathDetail.id_path_details)
         .then((pathNode) => {
           this.$set(this.pathNodes, pathDetail.id_path_details, pathNode.data.objects)
         })
     },
-    createPathDetail () {
-      apiManager.postPathDetails({
+    async createPathDetail () {
+      await apiManager.postPathDetails({
         campaign: {
           id_campaign: this.id_campaign,
           id_malette: this.id_malette
@@ -96,6 +99,8 @@ export default {
         name: this.$refs.name.$refs.input.value,
         decription: this.$refs.description.$refs.input.value
       })
+      await this.loadPathDetails()
+      this.dialog = false
     }
   }
 }
