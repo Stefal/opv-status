@@ -10,13 +10,27 @@
               <Menu></Menu>
             </v-toolbar>
             <v-card-text>
-              <v-data-table hide-actions :headers="headers" :items="pathDetails">
+              <v-data-table :headers="headers" :items="pathDetails" hide-actions item-key="id_path_details">
                 <template slot="items" slot-scope="props">
-                  <td>{{props.item.name}}</td>
-                  <td>{{props.item.decription}}</td>
-                  <td>{{props.item.id_path_details}}</td>
-                  <td v-if="props.item.id_path_details in pathNodes">{{pathNodes[props.item.id_path_details].length}}</td>
-                  <td v-else><v-progress-circular indeterminate color="primary"></v-progress-circular></td>
+                  <tr @click="props.expanded = !props.expanded">
+                    <td>{{props.item.name}}</td>
+                    <td>{{props.item.decription}}</td>
+                    <td>{{props.item.id_path_details}}</td>
+                    <td>{{props.item.id_malette}}</td>
+                    <td v-if="props.item.id_path_details in pathNodes">{{pathNodes[props.item.id_path_details].length}}</td>
+                    <td v-else><v-progress-circular indeterminate color="primary"></v-progress-circular></td>
+                  </tr>
+                </template>
+                <template slot="expand" slot-scope="props">
+                  <v-card flat>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <router-link :to="{ name: 'PathDetailsEditor', params: { id_path_details: props.item.id_path_details, id_malette: props.item.id_malette}}">
+                        <v-btn color="primary">Editor</v-btn>
+                      </router-link>
+                      <v-spacer></v-spacer>
+                    </v-card-actions>
+                  </v-card>
                 </template>
               </v-data-table>
             </v-card-text>
@@ -64,6 +78,7 @@ export default {
         {text: 'Name', value: 'name', align: 'left', sortable: false},
         {text: 'Description', value: 'description', sortable: false},
         {text: 'ID', value: 'id_path_details'},
+        {text: 'ID Malette', value: 'id_malette'},
         {text: 'Number path node', value: 'number'}
       ],
       dialog: false

@@ -64,10 +64,31 @@ export default class ApiManager {
   static getPathDetailFromCampaign (idCampaign) {
     return axios.get(opvApi + 'path_details?id_campaign=' + idCampaign)
   }
+  static getPathDetails (idPathDetails, idMalette) {
+    return axios.get(opvApi + 'path_details/' + idPathDetails + '/' + idMalette)
+  }
   static getPathNodeFromPathDetails (idPathDetails) {
     return axios.get(opvApi + 'path_node?id_path_details=' + idPathDetails)
   }
+  static getPathNodeExtendedFromPathDetails (idPathDetails) {
+    return axios.get(opvApi + 'path_node_extended?id_path_details=' + idPathDetails)
+  }
   static postPathDetails (pathDetails) {
     return axios.post(opvApi + 'path_details', pathDetails)
+  }
+  static getPanoramaSensorsFromCampaign (idCampaign) {
+    return axios.get(opvApi + 'panorama_sensors?id_campaign=' + idCampaign)
+  }
+  static getPanoramaSensors (idPanorama, idMalette) {
+    return axios.get(opvApi + 'panorama_sensors/' + idPanorama + '/' + idMalette)
+  }
+  static getActivePanoramaSensorsFromCampaign (idCampaign) {
+    return axios.get(opvApi + 'panorama_sensors?id_campaign=' + idCampaign + '&active=true')
+  }
+  static deletePathNode (idPathNode, idMalette) {
+    return axios.delete(opvApi + 'path_node/' + idPathNode + '/' + idMalette)
+  }
+  static postPathNode (pathNode) {
+    return axios.post(opvApi + 'path_node/', pathNode)
   }
 }
