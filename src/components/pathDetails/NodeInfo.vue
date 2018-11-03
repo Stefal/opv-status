@@ -1,7 +1,7 @@
 <template>
   <v-card v-if="node !== null">
     <v-toolbar dark color="primary">
-      <v-toolbar-title>Node {{node.id_path_node}}/{{node.id_malette}}</v-toolbar-title>
+      <v-toolbar-title>Node <span v-if="'id_path_node' in node">{{node.id_path_node}}/{{node.id_malette}}</span><span v-else>Not set yet</span></v-toolbar-title>
       <v-spacer></v-spacer>
       <router-link v-if="panorama !== null" :to="{name: 'Viewer', params: {id_tile: tile.id_tile, id_malette: tile.id_malette}}"><v-icon>panorama_horizontal</v-icon></router-link>
     </v-toolbar>

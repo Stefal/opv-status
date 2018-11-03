@@ -2,13 +2,6 @@
   <v-card>
     <v-card-text>
       <v-layout>
-        <v-flex>
-          <v-btn><v-icon>undo</v-icon></v-btn>
-          <v-btn><v-icon>redo</v-icon></v-btn>
-        </v-flex>
-      </v-layout>
-      <v-divider></v-divider>
-      <v-layout>
         <Import :path_details="path_details"></Import>
         <v-btn @click="deleteAll" dark color="primary">Delete all</v-btn>
       </v-layout>
@@ -22,7 +15,7 @@
         <v-radio label="Delete edge" value="deleteedge"></v-radio>
       </v-radio-group>
       <v-divider></v-divider>
-      <v-btn color="primary" dark>Generate Graph</v-btn>
+      <Generate @update:pathNode="updatePathNode" @update:pathEdge="updatePathEdge" :path_details="path_details" :path_node="path_node" :path_edge="path_edge"></Generate>
       <v-divider></v-divider>
       <v-layout>
         <v-flex>
@@ -39,12 +32,13 @@
 
 <script>
 import Import from '@/components/pathDetails/Import'
+import Generate from '@/components/pathDetails/Generate'
 import apiManager from '@/apiManager'
 
 export default {
   name: 'Parameter',
-  components: {Import},
-  props: ['path_details'],
+  components: {Import, Generate},
+  props: ['path_details', 'path_node', 'path_edge'],
   data () {
     return {
       mode: 'view'
@@ -57,18 +51,25 @@ export default {
     saveAsNew () {
       delete this.$parent.$parent.$parent.pathDetails.id_path_details
       delete this.$parent.$parent.$parent.pathDetails.id_malette
-      delete this.$parent.$parent.$parent.pathDetails.start_node
-      delete this.$parent.$parent.$parent.pathDetails.stop_node
       this.$parent.$parent.$parent.pathDetails.name = this.$refs.newName.$refs.input.value
+      debugger
       apiManager.postPathDetails(this.$parent.$parent.$parent.pathDetails)
         .then((pathDetails) => {
+          debugger
           this.$parent.$parent.$parent.pathDetails = pathDetails.data
           this.$parent.$parent.$parent.save(false)
         })
     },
     deleteAll () {
+      debugger
       this.$parent.$parent.$parent.deleteOldOne(this.$parent.$parent.$parent.pathNode)
-        .then(this.$parent.$parent.$parent.loadData())
+        .then(this.$parent.$parent.$parent.loadData)
+    },
+    updatePathNode (event) {
+      this.$emit('update:pathNode', event)
+    },
+    updatePathEdge (event) {
+      this.$emit('update:pathEdge', event)
     }
   }
 }

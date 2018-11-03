@@ -61,8 +61,6 @@ export default {
       for (var panorama in panoramas) {
         panorama = panoramas[panorama]
         let pathNode = panorama
-        pathNode['id_path_node'] = 'not set yet'
-        pathNode['id_malette'] = 'not set yet'
         pathNode['disabled'] = false
         pathNode['hotspot'] = false
         pathNode['endpoint'] = false
@@ -72,6 +70,7 @@ export default {
         pathNodes.push(pathNode)
       }
       this.$parent.$parent.$parent.$parent.$parent.pathNode.push(...pathNodes)
+      this.$parent.$parent.$parent.$parent.$parent.save(true)
     }
   }
 }

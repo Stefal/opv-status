@@ -5,6 +5,7 @@ const opv = Config.server.host
 const opvApi = opv + ':' + Config.server.api_port + '/'
 const opvDb = opv + ':' + Config.server.dm_port + '/v1/files/'
 const opvSt = opv + ':' + Config.server.status_port + '/'
+const opvGraph = opv + ':' + Config.server.graph_port + '/'
 
 export default class ApiManager {
   static dirHttpPath (dmUuid) {
@@ -70,6 +71,9 @@ export default class ApiManager {
   static getPathNodeFromPathDetails (idPathDetails) {
     return axios.get(opvApi + 'path_node?id_path_details=' + idPathDetails)
   }
+  static getPathEdgeFromPathDetails (idPathDetails) {
+    return axios.get(opvApi + 'path_edge?id_path_details=' + idPathDetails)
+  }
   static getPathNodeExtendedFromPathDetails (idPathDetails) {
     return axios.get(opvApi + 'path_node_extended?id_path_details=' + idPathDetails)
   }
@@ -88,7 +92,19 @@ export default class ApiManager {
   static deletePathNode (idPathNode, idMalette) {
     return axios.delete(opvApi + 'path_node/' + idPathNode + '/' + idMalette)
   }
+  static deletePathNodeFromPathDetails (idPathDetails) {
+    return axios.delete(opvApi + 'path_node?id_path_details=' + idPathDetails)
+  }
+  static deletePathEdgeFromPathDetails (idPathDetails) {
+    return axios.delete(opvApi + 'path_edge?id_path_details=' + idPathDetails)
+  }
   static postPathNode (pathNode) {
     return axios.post(opvApi + 'path_node/', pathNode)
+  }
+  static postPathEdge (pathEdge) {
+    return axios.post(opvApi + 'path_edge/', pathEdge)
+  }
+  static postGraphAll (perimeter, radialSpace, reduce, minPath, pathDetails) {
+    return axios.post(opvGraph + 'all/' + perimeter + '/' + radialSpace + '/' + reduce + '/' + minPath, pathDetails)
   }
 }

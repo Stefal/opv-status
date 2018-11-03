@@ -3,6 +3,7 @@
     <l-map ref='map' :center="center" :zoom='zoom' style="height: 100%">
       <l-tile-layer :url='url' :options='tileOption' :attribution='attribution'></l-tile-layer>
       <l-marker v-for='(aNode, index) in node' :key='aNode.id_path_node' :icon='getIcon(aNode, index)' :lat-lng='getLatLng(aNode)' @click="selectNode(index)"></l-marker>
+      <l-polyline v-for='(anEdge, index) in edge' :key='anEdge.id_path_edge' :latLngs="[getLatLng(nodeDict[anEdge.source_path_node.id_path_node]), getLatLng(nodeDict[anEdge.dest_path_node.id_path_node])]" @click="selectEdge(index)"></l-polyline>
     </l-map>
   </v-card>
 </template>
@@ -10,7 +11,7 @@
 <script>
 import '@/../node_modules/leaflet/dist/leaflet.css'
 import L from 'leaflet'
-import { LMap, LMarker, LPopup, LTileLayer } from 'vue2-leaflet'
+import { LMap, LMarker, LPopup, LTileLayer, LPolyline } from 'vue2-leaflet'
 
 export default {
   name: 'Map',
@@ -18,11 +19,18 @@ export default {
     LMap,
     LMarker,
     LPopup,
-    LTileLayer
+    LTileLayer,
+    LPolyline
   },
   props: {
     'node': {
       default: () => []
+    },
+    'edge': {
+      default: () => []
+    },
+    'path_details': {
+      default: () => { return {} }
     }
   },
   data () {
@@ -42,7 +50,8 @@ export default {
         black: L.icon({iconUrl: require('@/assets/markers/marker-icon-black.png'), iconSize: [25, 41], iconAnchor: [12, 41]}),
         orange: L.icon({iconUrl: require('@/assets/markers/marker-icon-orange.png'), iconSize: [25, 41], iconAnchor: [12, 41]})
       },
-      selectedNode: null
+      selectedNode: null,
+      newEdgeMarker: null
     }
   },
   methods: {
@@ -54,6 +63,12 @@ export default {
       }
     },
     getLatLng (node) {
+      if (node === undefined) {
+        return {
+          lat: 0,
+          lng: 0
+        }
+      }
       let sensorsType = this.getSensorsType(node)
       return {
         lat: node[sensorsType + 'gps_pos'].coordinates[0],
@@ -84,6 +99,32 @@ export default {
         this.$set(this.node[index], 'disabled', !this.node[index].disabled)
       } else if (mode === 'endpoint') {
         this.$set(this.node[index], 'endpoint', !this.node[index].endpoint)
+      } else if (mode === 'edge') {
+        if (this.newEdgeMarker === null) {
+          this.newEdgeMarker = this.node[index]
+        } else {
+          this.edge.push({
+            source_path_node: {
+              id_path_node: this.newEdgeMarker.id_path_node,
+              id_malette: this.newEdgeMarker.id_malette
+            },
+            dest_path_node: {
+              id_path_node: this.node[index].id_path_node,
+              id_malette: this.node[index].id_malette
+            },
+            path_details: {
+              id_path_details: this.path_details.id_path_details,
+              id_malette: this.path_details.id_malette
+            }
+          })
+          this.newEdgeMarker = null
+        }
+      }
+    },
+    selectEdge (index) {
+      let mode = this.$parent.$parent.$parent.$refs.parameter.mode
+      if (mode === 'deleteedge') {
+        this.edge.splice(index)
       }
     }
   },
@@ -105,6 +146,14 @@ export default {
         pos = L.latLng(this.node[i][sensorsType + 'gps_pos'].coordinates[0], this.node[i][sensorsType + 'gps_pos'].coordinates[1])
       }
       return pos
+    },
+    nodeDict () {
+      let dict = {}
+      for (let node in this.node) {
+        node = this.node[node]
+        dict[node.id_path_node] = node
+      }
+      return dict
     }
   }
 }
