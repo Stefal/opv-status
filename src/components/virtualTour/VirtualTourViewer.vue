@@ -5,19 +5,19 @@
         <v-flex>
           <v-card class="elevation-12">
             <v-toolbar dark color="primary">
-              <v-toolbar-title>Path details viewer: {{id_campaign}}-{{id_malette}}</v-toolbar-title>
+              <v-toolbar-title>Virtual tour viewer</v-toolbar-title>
               <v-spacer></v-spacer>
-              <Menu></Menu>
+              <Menu where="Virtual tour viewer"></Menu>
             </v-toolbar>
             <v-card-text>
-              <v-data-table :headers="headers" :items="pathDetails" hide-actions item-key="id_path_details">
+              <v-data-table :headers="headers" :items="virtualTour" hide-actions item-key="id_virtualtour">
                 <template slot="items" slot-scope="props">
                   <tr @click="props.expanded = !props.expanded">
-                    <td>{{props.item.name}}</td>
+                    <td>{{props.item.title}}</td>
                     <td>{{props.item.decription}}</td>
-                    <td>{{props.item.id_path_details}}</td>
+                    <td>{{props.item.id_virtualtour}}</td>
                     <td>{{props.item.id_malette}}</td>
-                    <td v-if="props.item.id_path_details in pathNodes">{{pathNodes[props.item.id_path_details].length}}</td>
+                    <td v-if="props.item.id_virtualtour in virtualTourPath">{{virtualTourPath[props.item.id_virtualtour].length}}</td>
                     <td v-else><v-progress-circular indeterminate color="primary"></v-progress-circular></td>
                   </tr>
                 </template>
@@ -25,7 +25,7 @@
                   <v-card flat>
                     <v-card-actions>
                       <v-spacer></v-spacer>
-                      <router-link :to="{ name: 'PathDetailsEditor', params: { id_path_details: props.item.id_path_details, id_malette: props.item.id_malette}}">
+                      <router-link :to="{ name: 'VirtualTourEditor', params: { id_virtualtour: props.item.id_virtualtour, id_malette: props.item.id_malette}}">
                         <v-btn color="primary">Editor</v-btn>
                       </router-link>
                       <v-spacer></v-spacer>
@@ -40,7 +40,7 @@
                 <v-btn slot="activator" dark color="primary">New</v-btn>
                 <v-card>
                   <v-toolbar color="primary" dark>
-                    <v-toolbar-title>New path details for campaign {{id_campaign}}/{{id_malette}}</v-toolbar-title>
+                    <v-toolbar-title>New virtual tour</v-toolbar-title>
                   </v-toolbar>
                   <v-card-text>
                     <v-text-field label="Name" ref="name"></v-text-field>
@@ -48,7 +48,7 @@
                   </v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" dark @click="createPathDetail">Create</v-btn>
+                    <v-btn color="primary" dark @click="createVirtualTour">Create</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
@@ -65,21 +65,20 @@ import Menu from '@/components/Menu'
 import apiManager from '@/apiManager'
 
 export default {
-  name: 'PathDetailsViewer',
-  props: ['id_campaign', 'id_malette'],
+  name: 'VirtualTourViewer',
   components: {
     Menu
   },
   data () {
     return {
-      pathDetails: [],
-      pathNodes: {},
+      virtualTour: [],
+      virtualTourPath: {},
       headers: [
-        {text: 'Name', value: 'name', align: 'left', sortable: false},
+        {text: 'Title', value: 'title', align: 'left', sortable: false},
         {text: 'Description', value: 'description', sortable: false},
         {text: 'ID', value: 'id_path_details'},
         {text: 'ID Malette', value: 'id_malette'},
-        {text: 'Number path node', value: 'number'}
+        {text: 'Number virtual tour path', value: 'number'}
       ],
       dialog: false
     }
@@ -88,19 +87,15 @@ export default {
     this.loadData()
   },
   methods: {
-    getPathNode (pathDetail) {
-      apiManager.getPathNodeFromPathDetails(pathDetail.id_path_details)
-        .then((pathNode) => {
-          this.$set(this.pathNodes, pathDetail.id_path_details, pathNode.data.objects)
+    getVirtualTourPath (virtualTour) {
+      apiManager.getVirtualTourPathFromVirtualTour(virtualTour.id_virtualtour)
+        .then((virtualTourPath) => {
+          this.$set(this.virtualTourPath, virtualTour.id_virtualtour, virtualTourPath.data.objects)
         })
     },
-    createPathDetail () {
-      apiManager.postPathDetails({
-        campaign: {
-          id_campaign: this.id_campaign,
-          id_malette: this.id_malette
-        },
-        name: this.$refs.name.$refs.input.value,
+    createVirtualTour () {
+      apiManager.postVirtualTour({
+        title: this.$refs.name.$refs.input.value,
         decription: this.$refs.description.$refs.input.value
       })
         .then(() => {
@@ -109,15 +104,13 @@ export default {
         })
     },
     loadData () {
-      if (this.id_campaign !== null && this.id_malette !== null) {
-        apiManager.getPathDetailFromCampaign(this.id_campaign)
-          .then((pathDetails) => {
-            this.pathDetails = pathDetails.data.objects
-            for (let pathDetail in this.pathDetails) {
-              this.getPathNode(this.pathDetails[pathDetail])
-            }
-          })
-      }
+      apiManager.getAllVirtualTour()
+        .then((virtualTour) => {
+          this.virtualTour = virtualTour.data.objects
+          for (let virtualTour in this.virtualTour) {
+            this.getVirtualTourPath(this.virtualTour[virtualTour])
+          }
+        })
     }
   }
 }

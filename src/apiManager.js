@@ -107,4 +107,22 @@ export default class ApiManager {
   static postGraphAll (perimeter, radialSpace, reduce, minPath, pathDetails) {
     return axios.post(opvGraph + 'all/' + perimeter + '/' + radialSpace + '/' + reduce + '/' + minPath, pathDetails)
   }
+  static postVirtualTour (virtualTour) {
+    return axios.post(opvApi + 'virtualtour', virtualTour)
+  }
+  static postVirtualTourPath (virtualTourPath) {
+    return axios.post(opvApi + 'virtualtour_path', virtualTourPath)
+  }
+  static getVirtualTourPathFromVirtualTour (idVirtualTour) {
+    return axios.get(opvApi + 'virtualtour_path?id_virtualtour=' + idVirtualTour)
+  }
+  static getAllVirtualTour () {
+    return axios.get(opvApi + 'virtualtour')
+  }
+  static getVirtualTour (idVirtualTour, idMalette) {
+    return axios.get(opvApi + 'virtualtour/' + idVirtualTour + '/' + idMalette)
+  }
+  static deleteVirtualTourPath (idVirtualTourPath, idMalette) {
+    return axios.delete(opvApi + 'virtualtour_path/' + idVirtualTourPath + '/' + idMalette)
+  }
 }
