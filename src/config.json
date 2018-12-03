@@ -3,7 +3,8 @@
     "host": "http://opv_master",
     "api_port": 5000,
     "dm_port": 5050,
-    "status_port": 5001
+    "status_port": 5001,
+    "graph_port": 5015
   },
   "picture": 6
 }

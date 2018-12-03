@@ -7,6 +7,9 @@ import ImportCampaign from '@/components/ImportCampaign'
 import Spark from '@/components/Spark'
 import PanoramaSelector from '@/components/panoramaSelector/PanoramaSelector'
 import PathDetailsViewer from '@/components/pathDetails/PathDetailsViewer'
+import PathDetailsEditor from '@/components/pathDetails/PathDetailsEditor'
+import VirtualTourViewer from '@/components/virtualTour/VirtualTourViewer'
+import VirtualTourEditor from '@/components/virtualTour/VirtualTourEditor'
 
 Vue.use(Router)
 
@@ -58,6 +61,24 @@ export default new Router({
       props: true,
       name: 'PathDetailsViewer',
       component: PathDetailsViewer
+    },
+    {
+      path: '/pathDetailsEditor/:id_path_details/:id_malette',
+      props: true,
+      name: 'PathDetailsEditor',
+      component: PathDetailsEditor
+    },
+    {
+      path: '/virtualTourViewer',
+      props: true,
+      name: 'VirtualTourViewer',
+      component: VirtualTourViewer
+    },
+    {
+      path: '/virtualTourEditor/:id_virtualtour/:id_malette',
+      props: true,
+      name: 'VirtualTourEditor',
+      component: VirtualTourEditor
     }
   ]
 })
