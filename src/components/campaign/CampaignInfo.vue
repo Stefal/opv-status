@@ -82,8 +82,8 @@ export default {
           var complet = false
           for (var picture in answer.data) {
             picture = answer.data[picture]
-            if (picture === 'APN' + (this.minPic - 1) + '.JPG') ||
-               (picture === 'APN' + (this.minPic - 1) + '.jpg')  {
+            if ((picture === 'APN' + (this.minPic - 1) + '.JPG') ||
+               (picture === 'APN' + (this.minPic - 1) + '.jpg'))  {
               complet = true
             }
           }
